@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title th:text="${originalUser.email}"></title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+ <link rel="stylesheet" href="./css/userProfile.css">
+</head>
+<body th:object="${originalUser}">
+
+<nav class="navbar navbar-expand-md navbar-dark bg-primary  navbar-fixed-top">
+		<a class="navbar-brand" href="/">Grouping Application</a>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="navbar-nav">
+				<li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" th:href="@{/userProfile}">User Profile</a></li>
+					<li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" th:href="@{/logout}">Logout</a></li>	
+				</ul>
+			</div>
+			<form class="form-inline">
+				<input class="form-control mr-sm-2" type="text" placeholder="Search">
+      				<button class="btn btn-success my-2 my-sm-0" type="button">Search</button>
+			</form>
+	
+	</nav> 
+
+	<h1 th:text="${originalUser.email}">USER EMAIL</h1>
+	
+	<a th:href="@{/userProfileEdit}"><button type="button">Edit Profile</button></a>
+	<img th:src="'data:image/jpeg;base64,'+${originalUser.getBase64Encoded()}" alt="profilePicture" style="width:350px; height: 280px"/>
+	<hr>
+	<table>
+		<tr>
+			<td>
+			First Name:
+			<p th:text="${originalUser.firstName}"></p>
+			</td>
+			<td>
+			Last Name:
+			<p th:text="${originalUser.lastName}"></p>
+			</td>
+		</tr>
+	</table>
+	<p>Program:</p>
+	<p th:text="${originalUser.program}"></p>
+	<hr>
+	<h2>Topics</h2>
+	<p th:text="${originalUser.topic}"></p>
+	<table>
+		<tr>
+			<th><h2>Courses</h2></th>
+		</tr>
+		<tr>
+			<td>
+				<p th:text="${originalUser.course}"></p>
+			</td>
+		</tr>
+	</table>
+	<hr>
+	
+	
+</body>
+</html>
