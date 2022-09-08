@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ca.sheridancollege.fangyux.service.UserService;
-import ca.sheridancollege.fangyux.web.dto.UserRegistrationDto;
+import ca.sheridancollege.fangyux.web.controllers.UserRegistrationDto;
 
 
 @Controller

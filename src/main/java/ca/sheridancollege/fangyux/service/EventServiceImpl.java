@@ -12,10 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import ca.sheridancollege.fangyux.beans.CartEvent;
 import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.repository.CartEventRepository;
 import ca.sheridancollege.fangyux.repository.EventRepository;
 
 
@@ -24,9 +22,6 @@ public class EventServiceImpl implements EventService{
 	
 	@Autowired
 	private EventRepository eventRepository;
-	
-	@Autowired
-	private CartEventRepository carteventrepository;
 	
 	@Autowired
 	private UserService userService;
@@ -59,22 +54,6 @@ public class EventServiceImpl implements EventService{
 		//this.carteventrepository.deleteById(id);
 		this.eventRepository.deleteById(id);
 	}
-	
-	@Override
-	public void addEventToCart(long id) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userService.getUserByEmail(auth.getName());
-		
-		CartEvent newEvent = new CartEvent();
-		newEvent.setUser(user);
-		newEvent.setEvent(this.eventRepository.getById(id));
-		newEvent.setQuantity(1);
-		
-		CartEvent saveCartEvent = carteventrepository.save(newEvent);
-		saveCartEvent.getId();
-	}
-	
-
 
 	@Override
 	public Page<Event> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {

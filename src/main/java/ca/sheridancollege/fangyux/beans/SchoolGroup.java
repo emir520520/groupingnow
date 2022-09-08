@@ -1,15 +1,7 @@
 package ca.sheridancollege.fangyux.beans;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +14,7 @@ import lombok.NonNull;
 @Data
 @Entity
 @Builder
+@Table(name="school_group")
 public class SchoolGroup {
 
 	@Id

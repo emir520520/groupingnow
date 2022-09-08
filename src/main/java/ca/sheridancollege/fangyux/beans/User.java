@@ -67,9 +67,6 @@ public class User {
 	private List<Event> events;
 	
 	@OneToMany
-	private List<Course> courseList = new ArrayList<Course>();
-	
-	@OneToMany
 	private List<Topic> topicList = new ArrayList<Topic>();
 	
 	@Lob
@@ -135,10 +132,6 @@ public class User {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-	
-	public List<Course> getCourseList(){
-		return this.courseList;
 	}
 	
 	public void setProgram(String program) {

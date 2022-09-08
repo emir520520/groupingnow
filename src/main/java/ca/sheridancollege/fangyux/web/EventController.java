@@ -102,13 +102,6 @@ public class EventController {
 		return "redirect:/";
 	}
 	
-	@GetMapping("/addEventToCart/{id}")
-	public String addEventToCart(@PathVariable (value="id") long id) {
-		//delete event from service
-		this.eventService.addEventToCart(id);
-		return "redirect:/";
-	}
-	
 	@GetMapping("/page/{pageNo}")
 	public String findPaginated(@PathVariable (value="pageNo") int pageNo, 
 			@RequestParam("sortField") String sortField,
