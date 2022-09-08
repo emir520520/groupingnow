@@ -1,4 +1,4 @@
-package ca.sheridancollege.fangyux.filepUpload;
+package ca.sheridancollege.fangyux.Utils;
 
 import java.io.*;
 import java.nio.file.*;
