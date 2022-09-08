@@ -3,11 +3,13 @@ package ca.sheridancollege.fangyux.web;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import javax.sql.rowset.serial.SerialBlob;
 
 import ca.sheridancollege.fangyux.beans.Topic;
+import ca.sheridancollege.fangyux.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +30,10 @@ public class UserProfileController {
 	
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private TopicService topicService;
+
 	private UserDetails userDetails;
 	private User user;
 	
@@ -50,7 +56,10 @@ public class UserProfileController {
 		this.userDetails =
 				 (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		this.user = userService.getUserByEmail(userDetails.getUsername());
-		Topic defaultTopic = new Topic();
+
+		ArrayList<Topic> topics= (ArrayList<Topic>) topicService.getAllTopics();
+
+		model.addAttribute("topics",topics);
 		model.addAttribute("originalUser", this.user);
 		model.addAttribute("user", new User());
 		return ("userProfileEdit");
