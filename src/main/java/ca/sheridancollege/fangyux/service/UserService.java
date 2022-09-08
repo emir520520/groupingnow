@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.web.controllers.UserRegistrationDto;
+import ca.sheridancollege.fangyux.web.dto.UserRegistrationDto;
 
 @Service
 public interface UserService extends UserDetailsService {

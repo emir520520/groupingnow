@@ -43,4 +43,6 @@ public class SchoolGroup {
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy="groups")
 	private List<User> users;
+
+//	@ManyToOne
 }

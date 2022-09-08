@@ -23,9 +23,6 @@ public class EventServiceImpl implements EventService{
 	@Autowired
 	private EventRepository eventRepository;
 	
-	@Autowired
-	private UserService userService;
-	
 	@Override
 	public List<Event> getAllEvents(){
 		return eventRepository.findAll();

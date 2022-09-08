@@ -78,7 +78,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.antMatchers(HttpMethod.GET, "/addEvent").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addEvent").hasRole("USER")
-		.anyRequest().authenticated() 
+//		.anyRequest().authenticated()
 		.and()
 		.formLogin()
 		.loginPage("/login")

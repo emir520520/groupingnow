@@ -9,6 +9,6 @@ import ca.sheridancollege.fangyux.beans.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
-	@Query(value="SELECT * FROM users WHERE email LIKE %:email%",nativeQuery=true)
+	@Query(value="SELECT * FROM user WHERE email LIKE %:email%",nativeQuery=true)
 	User findByEmail(@Param("email")String email);
 }

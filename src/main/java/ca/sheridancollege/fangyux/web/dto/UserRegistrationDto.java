@@ -1,4 +1,4 @@
-package ca.sheridancollege.fangyux.web.controllers;
+package ca.sheridancollege.fangyux.web.dto;
 
 public class UserRegistrationDto {
 

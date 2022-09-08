@@ -69,9 +69,6 @@ public class UserProfileController {
 			if(user.getProgram() != "") {
 				originalUser.setProgram(user.getProgram());
 			}
-			if(user.getTopic() != "") {
-				originalUser.setTopic(user.getTopic());
-			}
 			if(multipartFile != null ) {
 				Blob blob = null;
 			    byte[] blobAsBytes=null;

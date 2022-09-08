@@ -1,5 +1,9 @@
 package ca.sheridancollege.fangyux.beans;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +28,10 @@ import javax.persistence.JoinColumn;
 
 //@ComponentScan
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Data
+@Getter
+@Setter
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
 
 	@Id
@@ -39,23 +46,28 @@ public class User {
 	
 	@Column(name = "email")
 	private String email;
-	
-	private String course="";
-	
-	private String topic;
-	
+
+	@Column(name = "program")
 	private String program;
+
+	@Column(name = "campus")
+	private String campus;
 	
 	private String password;
 	
 	private boolean enabled;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_group",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "group_id", referencedColumnName = "id"))
 	private List<SchoolGroup> groups;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
-			name = "users_roles",
+			name = "user_role",
 			joinColumns = @JoinColumn(
 					name = "user_id", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(
@@ -63,11 +75,20 @@ public class User {
 	private Collection<Role> roles;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_event")
+	@JoinTable(name = "user_event",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "event_id", referencedColumnName = "id"))
 	private List<Event> events;
 	
 	@OneToMany
-	private List<Topic> topicList = new ArrayList<Topic>();
+	@JoinTable(name = "user_topic",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "topic_id", referencedColumnName = "id"))
+	private List<Topic> topics = new ArrayList<>();
 	
 	@Lob
 	@Column(name = "photo", nullable = true)
@@ -147,22 +168,7 @@ public class User {
 	}
 	
 	public List<Topic> getTopicList(){
-		return this.topicList;
-	}
-	public String getTopic() {
-		return topic;
-	}
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
-	public String getCourse() {
-		return course;
-	}
-	public void setCourse(String course) {
-		this.course = course;
-	}
-	public void appendCourse(String course) {
-		this.course += course;
+		return this.topics;
 	}
 	
 	public byte[]  getPhoto() {

@@ -20,7 +20,7 @@ import ca.sheridancollege.fangyux.Addition.StudentUserDetails;
 import ca.sheridancollege.fangyux.beans.Role;
 import ca.sheridancollege.fangyux.beans.User;
 import ca.sheridancollege.fangyux.repository.UserRepository;
-import ca.sheridancollege.fangyux.web.controllers.UserRegistrationDto;
+import ca.sheridancollege.fangyux.web.dto.UserRegistrationDto;
 
 @Service
 @Transactional
