@@ -60,15 +60,13 @@ public class UserProfileController {
 		//transfer image type
 		this.user=ImageOperation.attatchBase64ToUser(user);
 
-		//get all topics
-		ArrayList<Topic> topics= (ArrayList<Topic>) topicService.getAllTopics();
-
-		//get topics that current user picked
-		ArrayList<Topic> topicsOfUser= (ArrayList<Topic>) topicService.getTopicsOfUser(user.getId());
-
-
-
-		model.addAttribute("topics",topics);
+//		//get all topics
+//		ArrayList<Topic> topics= (ArrayList<Topic>) topicService.getAllTopics();
+//
+//		//get topics that current user picked
+//		ArrayList<Topic> topicsOfUser= (ArrayList<Topic>) topicService.getTopicsOfUser(user.getId());
+//
+//		model.addAttribute("topics",topics);
 		model.addAttribute("originalUser", this.user);
 		model.addAttribute("user", new User());
 		return ("userProfileEdit");
