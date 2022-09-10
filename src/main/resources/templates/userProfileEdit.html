@@ -33,18 +33,18 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<hr>
 	
 			<span>First Name:
-			<input type="text" th:placeholder="${originalUser.firstName}" th:field="*{firstName}"/></span>
+			<input type="text" th:placeholder="${originalUser.firstName}" th:field="*{firstName}" th:value="${originalUser.firstName}"/></span>
 
 			<span>Last Name:
-			<input type="text" th:placeholder="${originalUser.lastName}" th:field="*{lastName}"/></span>
+			<input type="text" th:placeholder="${originalUser.lastName}" th:field="*{lastName}" th:value="${originalUser.lastName}"/></span>
 				<p>Program:</p>
-			<input type="text" th:placeholder="${originalUser.program}" th:field="*{program}"/>
+			<input type="text" th:placeholder="${originalUser.program}" th:field="*{program}" th:value="${originalUser.program}"/>
 			
 	<h3>Topics</h3>
 	<p>Select from the dropdown below to save a topic!</p>
 	<p style="color: #c82333" th:unless="${!originalUser.topics.isEmpty()}">You do not have any interested topics right now, please choose some!</p>
 	
-	<select th:field="*{topics}" th:name="topics" multiple>
+	<select th:field="*{topics}" th:value="*{topics}" th:name="topics" multiple>
 		<option th:each="topic : ${topics}" th:value="${topic.id}" th:text="${topic.name}" name="topic"></option>
 	</select>
 

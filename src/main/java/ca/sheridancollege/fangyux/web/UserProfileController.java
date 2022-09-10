@@ -8,6 +8,7 @@ import java.util.Base64;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.beans.Topic;
 import ca.sheridancollege.fangyux.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,37 +69,39 @@ public class UserProfileController {
 	@PostMapping("userProfileEdit")
 	public String userProfileEditSubmit(@ModelAttribute User user, Model model,
 			@RequestParam("image") MultipartFile multipartFile) throws IOException {
-			User originalUser = userService.getUserByEmail(userDetails.getUsername());
-			if(user.getFirstName() != "") {
-				originalUser.setFirstName(user.getFirstName());
-			}
-			if(user.getLastName() != "") {
-				originalUser.setLastName(user.getLastName());
-			}
-			if(user.getProgram() != "") {
-				originalUser.setProgram(user.getProgram());
-			}
-			if(multipartFile != null ) {
-				Blob blob = null;
-			    byte[] blobAsBytes=null;
-			    try {
-			        blob = new SerialBlob(multipartFile.getBytes());
-			        
-			        int blobLength = (int) blob.length();  
-			        blobAsBytes = blob.getBytes(1, blobLength);
-			        originalUser.setPhoto(blobAsBytes);
-			    } catch (Exception e) {
-			        e.printStackTrace();
-			    }
-			}
+//			User originalUser = userService.getUserByEmail(userDetails.getUsername());
+//			if(user.getFirstName() != "") {
+//				originalUser.setFirstName(user.getFirstName());
+//			}
+//			if(user.getLastName() != "") {
+//				originalUser.setLastName(user.getLastName());
+//			}
+//			if(user.getProgram() != "") {
+//				originalUser.setProgram(user.getProgram());
+//			}
+//			if(multipartFile != null ) {
+//				Blob blob = null;
+//			    byte[] blobAsBytes=null;
+//			    try {
+//			        blob = new SerialBlob(multipartFile.getBytes());
+//
+//			        int blobLength = (int) blob.length();
+//			        blobAsBytes = blob.getBytes(1, blobLength);
+//			        originalUser.setPhoto(blobAsBytes);
+//			    } catch (Exception e) {
+//			        e.printStackTrace();
+//			    }
+//			}
+		//user= ImageOperation.attatchToUser(multipartFile);
+
 			
-			userService.saveUser(originalUser);
-			
-			byte[] encodeBase64 = Base64.getEncoder().encode(originalUser.getPhoto());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			originalUser.setBase64Encoded(base64Encoded);
-			
-			model.addAttribute("originalUser", originalUser);
-			return ("userProfile");
+		userService.saveUser(user);
+
+
+
+
+
+		//model.addAttribute("originalUser", originalUser);
+		return ("userProfile");
 	}
 }

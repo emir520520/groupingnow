@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ca.sheridancollege.fangyux.service.UserService;
 import ca.sheridancollege.fangyux.web.dto.UserRegistrationDto;
 
+import java.io.IOException;
+
 
 @Controller
 @RequestMapping("/registration")
@@ -32,7 +34,7 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping
-	public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto) {
+	public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto) throws IOException {
 		userService.save(registrationDto);
 		return "redirect:/registration?success";
 	}

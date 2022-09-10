@@ -1,5 +1,8 @@
 package ca.sheridancollege.fangyux.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -7,7 +10,9 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +26,7 @@ import ca.sheridancollege.fangyux.beans.Role;
 import ca.sheridancollege.fangyux.beans.User;
 import ca.sheridancollege.fangyux.repository.UserRepository;
 import ca.sheridancollege.fangyux.web.dto.UserRegistrationDto;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -70,10 +76,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User save(UserRegistrationDto registrationDto) {
+	public User save(UserRegistrationDto registrationDto) throws IOException {
 		User student = new User(registrationDto.getFirstName(), registrationDto.getLastName(),
 				registrationDto.getEmail(), passwordEncoder.encode(registrationDto.getPassword()),
 				Arrays.asList(new Role("ROLE_USER")));
+
+		//Set default avatar
+		File defaultAvatar=new File("src/main/resources/static/img/img.png");
+		String absolutePath = defaultAvatar.getAbsolutePath();
+		File a=new File(absolutePath);
+
+		MultipartFile avatar=new MockMultipartFile("avatar", Files.readAllBytes(a.toPath()));
+
+		user= ImageOperation.attatchToUser(student, avatar);
 
 		return userRepository.save(student);
 	}

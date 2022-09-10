@@ -1,5 +1,6 @@
 package ca.sheridancollege.fangyux.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -14,7 +15,7 @@ import ca.sheridancollege.fangyux.web.dto.UserRegistrationDto;
 @Service
 public interface UserService extends UserDetailsService {
 
-	User save(UserRegistrationDto registrationDto);
+	User save(UserRegistrationDto registrationDto) throws IOException;
 
 	List<User> getAllUsers();
 
