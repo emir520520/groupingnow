@@ -82,7 +82,7 @@ public class User {
 					name = "event_id", referencedColumnName = "id"))
 	private List<Event> events;
 	
-	@OneToMany
+	@ManyToMany
 	@JoinTable(name = "user_topic",
 			joinColumns = @JoinColumn(
 					name = "user_id", referencedColumnName = "id"),

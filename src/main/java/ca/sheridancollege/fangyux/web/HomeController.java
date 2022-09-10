@@ -1,9 +1,11 @@
 package ca.sheridancollege.fangyux.web;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.List;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,8 +31,8 @@ public class HomeController {
 	private UserRepository userRepo;
 	
 	@GetMapping("/")
-	public String goHome(Model model, @AuthenticationPrincipal Authentication authentication) throws 
-	UnsupportedEncodingException {
+	public String goHome(Model model, @AuthenticationPrincipal Authentication authentication) throws
+			IOException {
 		
 	//-------------------------------------------Authentication
 	Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
@@ -43,9 +45,7 @@ public class HomeController {
 				List<Event> events=eventRepo.getUserEvents(user.getFirstName());
 				
 				for(int i=0;i<events.size();i++) {
-					byte[] encodeBase64 = Base64.getEncoder().encode(events.get(i).getEventImage());
-					String base64Encoded = new String(encodeBase64, "UTF-8");
-					events.get(i).setBase64Encoded(base64Encoded);
+					events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
 				}
 
 				model.addAttribute("events",events);
@@ -54,9 +54,7 @@ public class HomeController {
 		List<SchoolGroup> groups=groupRepo.getUserGroup(user.getFirstName());
 		
 		for(int i=0;i<groups.size();i++) {
-			byte[] encodeBase64 = Base64.getEncoder().encode(groups.get(i).getPhoto());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			groups.get(i).setBase64Encoded(base64Encoded);
+			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
 		}
 
 		model.addAttribute("groups",groups);
@@ -65,9 +63,7 @@ public class HomeController {
 		List<Event> events=eventRepo.getTwoEvents();
 		
 		for(int i=0;i<events.size();i++) {
-			byte[] encodeBase64 = Base64.getEncoder().encode(events.get(i).getEventImage());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			events.get(i).setBase64Encoded(base64Encoded);
+			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
 		}
 
 		model.addAttribute("events",events);
@@ -76,9 +72,7 @@ public class HomeController {
 		List<SchoolGroup> groups=groupRepo.getTwoGroups();
 		
 		for(int i=0;i<groups.size();i++) {
-			byte[] encodeBase64 = Base64.getEncoder().encode(groups.get(i).getPhoto());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			groups.get(i).setBase64Encoded(base64Encoded);
+			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
 		}
 
 		model.addAttribute("groups",groups);
