@@ -59,7 +59,7 @@
             <div class="card-body">
                 <h5 class="card-title" th:text="'Event Name:'+${e.eventName}"></h5>
                 <p class="card-text" th:text="${e.Description}"></p>
-                <a href="#" class="btn btn-primary">Find Details</a>
+                <a th:href="@{/findDetailsEvent/{id}(id=${e.id})}" class="btn btn-primary">Find Details</a>
             </div>
         </div>
       </div>
@@ -71,7 +71,7 @@
             <div class="card-body">
                 <h5 class="card-title" th:text="'Group Name:'+${g.name}"></h5>
                 <p class="card-text" th:text="${g.description}"></p>
-                <a href="#" class="btn btn-primary">Find Details</a>
+                <a th:href="@{/findDetailsGroup/{id}(id=${g.id})}" class="btn btn-primary">Find Details</a>
             </div>
         </div>
       </div>

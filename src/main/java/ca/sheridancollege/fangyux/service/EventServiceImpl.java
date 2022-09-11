@@ -1,8 +1,10 @@
 package ca.sheridancollege.fangyux.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +24,7 @@ public class EventServiceImpl implements EventService{
 	
 	@Autowired
 	private EventRepository eventRepository;
-	
+
 	@Override
 	public List<Event> getAllEvents(){
 		return eventRepository.findAll();

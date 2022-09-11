@@ -63,7 +63,7 @@ public class ImageOperation {
         return blobAsBytes;
     }
 
-    private static String transferToBase64(byte[] photo) throws UnsupportedEncodingException {
+    public static String transferToBase64(byte[] photo) throws UnsupportedEncodingException {
         byte[] encodeBase64 = Base64.getEncoder().encode(photo);
 
         return new String(encodeBase64, "UTF-8");

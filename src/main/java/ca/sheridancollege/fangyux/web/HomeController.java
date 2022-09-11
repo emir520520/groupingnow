@@ -3,7 +3,11 @@ package ca.sheridancollege.fangyux.web;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
+import ca.sheridancollege.fangyux.service.EventService;
+import ca.sheridancollege.fangyux.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,11 +23,17 @@ import ca.sheridancollege.fangyux.repository.EventRepository;
 import ca.sheridancollege.fangyux.repository.GroupRepository;
 import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @AllArgsConstructor
 public class HomeController {
-	
+
+	@Autowired
+	private EventService eventService;
+	@Autowired
+	private GroupService groupService;
+
 	private EventRepository eventRepo;
 	private GroupRepository groupRepo;
 	private UserRepository userRepo;
@@ -87,4 +97,27 @@ public class HomeController {
 	
 	return "home.html";
 }
+	@GetMapping("/findDetailsEvent/{id}")
+	public String goFindDetailEvent(@PathVariable (value = "id") Long id, Model model) throws
+			UnsupportedEncodingException{
+
+
+		Event event = eventService.getEventById(id);
+
+		event= ImageOperation.attatchBase64ToEvent(event);
+		//set event as a model
+		model.addAttribute("events",event);
+			return "findDetailsEvent.html";
+
+	}
+	@GetMapping("/findDetailsGroup/{id}")
+	public String goFindDetailGroup(@PathVariable (value = "id") Long id, Model model) throws
+			UnsupportedEncodingException{
+		SchoolGroup group = groupService.getGroupById(id);
+		group= ImageOperation.attatchBase64ToGroup(group);
+		//set group as a model
+		model.addAttribute("groups",group);
+		return "findDetailsGroup.html";
+
+	}
 }
