@@ -7,10 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class GroupServiceImpl implements GroupService{
 
     @Autowired
@@ -45,6 +47,17 @@ public class GroupServiceImpl implements GroupService{
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.groupRepo.findAll(pageable);
+    }
+
+    @Override
+    public Page<SchoolGroup> getGroupsPaginated(int pageNo, int pageSize, String scope) {
+        if(scope=="all"){
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            return this.groupRepo.findAll(pageable);
+        }else{
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            return (Page<SchoolGroup>) this.groupRepo.getUserGroups(scope, pageable);
+        }
     }
 
     @Override

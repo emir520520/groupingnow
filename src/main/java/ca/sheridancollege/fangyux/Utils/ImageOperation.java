@@ -52,7 +52,7 @@ public class ImageOperation {
         return event;
     }
 
-    private static byte[] transferToBytes(MultipartFile image){
+    public static byte[] transferToBytes(MultipartFile image){
         Blob blob = null;
         byte[] blobAsBytes=null;
         try {
@@ -67,7 +67,7 @@ public class ImageOperation {
         return blobAsBytes;
     }
 
-    private static String transferToBase64(byte[] photo) throws IOException {
+    public static String transferToBase64(byte[] photo) throws IOException {
         //In case, the object did not have image set
         if(photo==null){
             //Set default avatar

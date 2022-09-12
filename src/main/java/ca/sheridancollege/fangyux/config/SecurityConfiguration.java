@@ -69,9 +69,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/").permitAll()
 		.antMatchers(HttpMethod.GET, "/registration**").permitAll()
-		.antMatchers(HttpMethod.GET, "//js/**").permitAll()
-		.antMatchers(HttpMethod.GET, "/css/**").permitAll()
-		.antMatchers(HttpMethod.GET, "/images/**").permitAll()
+//		.antMatchers(HttpMethod.GET, "//js/**").permitAll()
+//		.antMatchers(HttpMethod.GET, "/css/**").permitAll()
+//		.antMatchers(HttpMethod.GET, "/images/**").permitAll()
+//		.antMatchers(HttpMethod.GET, "/**/static/**").permitAll()
 		.antMatchers(HttpMethod.GET, "//user/**").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/cart").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/addGroup").hasRole("USER")
@@ -100,7 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception{
-		web.ignoring().antMatchers("/images/**,/js/**");
+		web.ignoring().antMatchers("/static/**","/css/**");
 	}
 	
 	@Autowired
