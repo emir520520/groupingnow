@@ -15,6 +15,7 @@
 
     <!--  Pagination Plugin  -->
     <script type="text/javascript" src="../static/js/jQuery/jquery.pagination.js"></script>
+    <link rel="stylesheet" href="../static/css/pagination.css" />
 
     <!--  Pagination js file  -->
     <script type="text/javascript" src="../static/my-js/pagination-operation.js"></script>
@@ -62,14 +63,14 @@
         <h3>Events</h3>
     </div>
     <div class="card-deck" style="margin-left: 100px; margin-right: 100px;" id="event-deck">
-        <div class="card" th:each="e : ${events}">
-            <img th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}" class="card-img-top" alt="Event Image" style="width:100%;">
-            <div class="card-body">
-                <h5 class="card-title" th:text="${e.eventName}"></h5>
-                <p class="card-text" th:text="${e.Description}"></p>
-                <a href="#" class="btn btn-primary">Find Details</a>
-            </div>
-        </div>
+<!--        <div class="card" th:each="e : ${events}">-->
+<!--            <img th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}" class="card-img-top" alt="Event Image" style="width:100%;">-->
+<!--            <div class="card-body">-->
+<!--                <h5 class="card-title" th:text="${e.eventName}"></h5>-->
+<!--                <p class="card-text" th:text="${e.Description}"></p>-->
+<!--                <a href="#" class="btn btn-primary">Find Details</a>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 
     <div id="Pagination" class="pagination"></div>
@@ -90,30 +91,6 @@
             </div>
         </div>
     </div>
-
-<!--    <div class="list-group m-5">-->
-<!--        <h2>Events</h2>-->
-<!--        <div class="card list-group-item d-flex flex-row" th:each="e : ${events}">-->
-<!--            <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}"/>-->
-<!--            <div class="card-body">-->
-<!--                <h5 class="card-title" th:text="'Event Name:'+${e.eventName}"></h5>-->
-<!--                <p class="card-text" th:text="${e.Description}"></p>-->
-<!--                <a href="#" class="btn btn-primary">Find Details</a>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      <div class="list-group m-5">-->
-<!--        <h2>Groups</h2>-->
-<!--        <div class="card list-group-item d-flex flex-row" th:each="g : ${groups}">-->
-<!--            <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>-->
-<!--            <div class="card-body">-->
-<!--                <h5 class="card-title" th:text="'Group Name:'+${g.name}"></h5>-->
-<!--                <p class="card-text" th:text="${g.description}"></p>-->
-<!--                <a href="#" class="btn btn-primary">Find Details</a>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--      </div>-->
 
       <!--**************************************Footer*************************************-->
       <footer class="page-footer font-small bg-dark mb-0">

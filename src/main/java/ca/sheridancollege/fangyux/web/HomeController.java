@@ -97,6 +97,8 @@ public class HomeController {
 			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
 		}
 
-		return ResultEntity.successWithtData(events);
+		Long totalRecords=eventPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
 	}
 }

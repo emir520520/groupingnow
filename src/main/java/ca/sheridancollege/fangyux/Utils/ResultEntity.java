@@ -22,15 +22,20 @@ public class ResultEntity<T> {
     //返回的数据
     private T data;
 
+    //分页需要的总记录数
+    private Long totalRecords;
+
     public static <T> ResultEntity<T> successWithoutData(){
-        return new ResultEntity<T>(success,null,null);
+        return new ResultEntity<T>(success,null,null,null);
     }
 
     public static <T> ResultEntity<T> successWithtData(T data){
-        return new ResultEntity<T>(success,null,data);
+        return new ResultEntity<T>(success,null,data, null);
     }
 
     public static <T> ResultEntity<T> failed(String msg){
-        return new ResultEntity<T>(fail,msg,null);
+        return new ResultEntity<T>(fail,msg,null,null);
     }
+
+    public static <T> ResultEntity<T> successWithtDataAndTotalRecoreds(T data, Long totalRecords){return new ResultEntity<T>(success,null,data,totalRecords);}
 }
