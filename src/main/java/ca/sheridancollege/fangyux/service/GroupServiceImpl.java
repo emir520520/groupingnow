@@ -56,7 +56,7 @@ public class GroupServiceImpl implements GroupService{
             return this.groupRepo.findAll(pageable);
         }else{
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            return (Page<SchoolGroup>) this.groupRepo.getUserGroups(scope, pageable);
+            return this.groupRepo.getUserGroups(scope, pageable);
         }
     }
 

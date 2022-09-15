@@ -51,31 +51,31 @@ public class HomeController {
 			model.addAttribute("user", user.getFirstName());
 		}
 
-		//--------------------Top two events
-		Page<Event> eventPage = eventService.getEventsPaginated(1, 3, "all");
-
-		List<Event> events = new ArrayList<>();
-
-		eventPage.forEach(entity -> events.add(entity));
-
-		for (int i = 0; i < events.size(); i++) {
-			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
-		}
-
-		model.addAttribute("events", events);
-
-		//--------------------Top two groups
-		Page<SchoolGroup> groupPage = groupService.getGroupsPaginated(1, 3, "all");
-
-		List<SchoolGroup> groups = new ArrayList<>();
-
-		groupPage.forEach(entity -> groups.add(entity));
-
-		for (int i = 0; i < groups.size(); i++) {
-			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
-		}
-
-		model.addAttribute("groups", groups);
+//		//--------------------Top two events
+//		Page<Event> eventPage = eventService.getEventsPaginated(1, 3, "all");
+//
+//		List<Event> events = new ArrayList<>();
+//
+//		eventPage.forEach(entity -> events.add(entity));
+//
+//		for (int i = 0; i < events.size(); i++) {
+//			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
+//		}
+//
+//		model.addAttribute("events", events);
+//
+//		//--------------------Top two groups
+//		Page<SchoolGroup> groupPage = groupService.getGroupsPaginated(1, 3, "all");
+//
+//		List<SchoolGroup> groups = new ArrayList<>();
+//
+//		groupPage.forEach(entity -> groups.add(entity));
+//
+//		for (int i = 0; i < groups.size(); i++) {
+//			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
+//		}
+//
+//		model.addAttribute("groups", groups);
 
 		return "home.html";
 	}
@@ -100,5 +100,27 @@ public class HomeController {
 		Long totalRecords=eventPage.getTotalElements();
 
 		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
+	}
+
+	@RequestMapping("/group/paginated")
+	@ResponseBody
+	public ResultEntity<List<SchoolGroup>> getGroupPaginated(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam(value = "keyword", defaultValue = "")String keyword
+	) throws IOException {
+		Page<SchoolGroup> groupPage = groupService.getGroupsPaginated(pageNum, pageSize, "all");
+
+		List<SchoolGroup> groups = new ArrayList<>();
+
+		groupPage.forEach(entity -> groups.add(entity));
+
+		for (int i = 0; i < groups.size(); i++) {
+			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
+		}
+
+		Long totalRecords=groupPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(groups, totalRecords);
 	}
 }

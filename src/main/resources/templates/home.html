@@ -59,38 +59,25 @@
     </nav>
 
     <!--**************************************Body Div*************************************-->
-    <div>
-        <h3>Events</h3>
-    </div>
-    <div class="card-deck" style="margin-left: 100px; margin-right: 100px;" id="event-deck">
-<!--        <div class="card" th:each="e : ${events}">-->
-<!--            <img th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}" class="card-img-top" alt="Event Image" style="width:100%;">-->
-<!--            <div class="card-body">-->
-<!--                <h5 class="card-title" th:text="${e.eventName}"></h5>-->
-<!--                <p class="card-text" th:text="${e.Description}"></p>-->
-<!--                <a href="#" class="btn btn-primary">Find Details</a>-->
-<!--            </div>-->
-<!--        </div>-->
+    <div class="card-deck" style="margin-left: 100px; margin-right: 100px; margin-top: 90px;" id="event-deck">
     </div>
 
-    <div id="Pagination" class="pagination"></div>
+    <div id="Pagination-event" class="pagination" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;"></div>
 
     <br><br><br><br>
 
-    <div class="card-deck" style="margin-left: 100px; margin-right: 100px;">
-        <div>
-            <h3>Groups</h3>
-        </div>
-
-        <div class="card" th:each="g : ${groups}">
-            <img th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}" class="card-img-top" alt="Group Image" style="width:100%;">
-            <div class="card-body">
-                <h5 class="card-title" th:text="${g.name}"></h5>
-                <p class="card-text" th:text="${g.description}"></p>
-                <a href="#" class="btn btn-primary">Find Details</a>
-            </div>
-        </div>
+    <div class="card-deck" id="group-deck" style="margin-left: 100px; margin-right: 100px;">
     </div>
+
+    <div id="Pagination-group" class="pagination" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;"></div>
 
       <!--**************************************Footer*************************************-->
       <footer class="page-footer font-small bg-dark mb-0">
@@ -104,8 +91,14 @@
         window.eventPageNum = 1;
         window.eventPagesize = 3;
 
-        //调用分页函数
+        window.groupPageNum = 1;
+        window.groupPagesize = 3;
+
+        //调用Event分页函数
         generateEventPagination();
+
+        //调用Group分页函数
+        generateGroupPagination();
     });
 </script>
 </body>
