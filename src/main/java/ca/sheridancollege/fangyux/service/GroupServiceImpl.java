@@ -50,6 +50,17 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
+    public Page<SchoolGroup> getGroupsPaginated(int pageNo, int pageSize, String scope) {
+        if(scope=="all"){
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            return this.groupRepo.findAll(pageable);
+        }else{
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            return this.groupRepo.getUserGroups(scope, pageable);
+        }
+    }
+
+    @Override
     public void save(SchoolGroup group) {
         groupRepo.save(group);
     }

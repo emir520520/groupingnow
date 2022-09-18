@@ -17,4 +17,9 @@ public class TopicServiceImpl implements TopicService{
     public List<Topic> getAllTopics() {
         return topicRepo.getAllTopics();
     }
+
+    @Override
+    public List<Topic> getTopicsOfUser(Long id) {
+        return topicRepo.getTopicOfUser(id);
+    }
 }

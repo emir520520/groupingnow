@@ -6,13 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
 
-    <!-- Bootstrap core CSS -->
-    <link href="" rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <!-- Bootstrap -->
+    <link href="" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <!-- Custom styles for this template -->
-    <link href="" rel="stylesheet" th:href="@{/css/DIY.css}">
-    
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!--  jQuery  -->
+    <script type="text/javascript" src="../static/js/jQuery/jquery-2.1.1.min.js"></script>
+
+    <!--  Pagination Plugin  -->
+    <script type="text/javascript" src="../static/js/jQuery/jquery.pagination.js"></script>
+    <link rel="stylesheet" href="../static/css/pagination.css" />
+
+    <!--  Pagination js file  -->
+    <script type="text/javascript" src="../static/my-js/pagination-operation.js"></script>
+
   <body>
 
     <nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
@@ -20,10 +27,10 @@
     
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item" sec:authorize="isAuthenticated()">
+          <li class="nav-item">
             <a class="nav-link" href="/events">Events</a>
           </li>
-          <li class="nav-item" sec:authorize="isAuthenticated()">
+          <li class="nav-item">
             <a class="nav-link" href="/viewGroups">Groups</a>
           </li>
           <li class="nav-item" sec:authorize="isAnonymous()">
@@ -52,29 +59,25 @@
     </nav>
 
     <!--**************************************Body Div*************************************-->
-    <div class="list-group m-5">
-        <h2>Events</h2>
-        <div class="card list-group-item d-flex flex-row" th:each="e : ${events}">
-            <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}"/>
-            <div class="card-body">
-                <h5 class="card-title" th:text="'Event Name:'+${e.eventName}"></h5>
-                <p class="card-text" th:text="${e.Description}"></p>
-                <a th:href="@{/findDetailsEvent/{id}(id=${e.id})}" class="btn btn-primary">Find Details</a>
-            </div>
-        </div>
-      </div>
+    <div class="card-deck" style="margin-left: 100px; margin-right: 100px; margin-top: 90px;" id="event-deck">
+    </div>
 
-      <div class="list-group m-5">
-        <h2>Groups</h2>
-        <div class="card list-group-item d-flex flex-row" th:each="g : ${groups}">
-            <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
-            <div class="card-body">
-                <h5 class="card-title" th:text="'Group Name:'+${g.name}"></h5>
-                <p class="card-text" th:text="${g.description}"></p>
-                <a th:href="@{/findDetailsGroup/{id}(id=${g.id})}" class="btn btn-primary">Find Details</a>
-            </div>
-        </div>
-      </div>
+    <div id="Pagination-event" class="pagination" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;"></div>
+
+    <br><br><br><br>
+
+    <div class="card-deck" id="group-deck" style="margin-left: 100px; margin-right: 100px;">
+    </div>
+
+    <div id="Pagination-group" class="pagination" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;"></div>
 
       <!--**************************************Footer*************************************-->
       <footer class="page-footer font-small bg-dark mb-0">
@@ -82,5 +85,21 @@
           <a >groupingnow.ca</a>
         </div>
       </footer>
+
+<script type="text/javascript">
+    $(function() {
+        window.eventPageNum = 1;
+        window.eventPagesize = 3;
+
+        window.groupPageNum = 1;
+        window.groupPagesize = 3;
+
+        //调用Event分页函数
+        generateEventPagination();
+
+        //调用Group分页函数
+        generateGroupPagination();
+    });
+</script>
 </body>
 </html>

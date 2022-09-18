@@ -66,8 +66,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateUser(User user) {
-		return userRepository.save(user);
+	public String getUserEncryptedPasswordById(Long id) {
+		return String.valueOf(userRepository.getEncryptedPasswordById(id));
+	}
+
+	@Override
+	public int updateUser(User user) {
+		return userRepository.updateUser(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getCampus(), user.getProgram());
+	}
+
+	@Override
+	public int updateUserWithAvatar(User user) {
+		return userRepository.updateUserWithAvatar(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getCampus(), user.getProgram(), user.getPhoto());
 	}
 
 	@Override
@@ -82,7 +92,7 @@ public class UserServiceImpl implements UserService {
 				Arrays.asList(new Role("ROLE_USER")));
 
 		//Set default avatar
-		File defaultAvatar=new File("src/main/resources/static/img/img.png");
+		File defaultAvatar=new File("src/main/resources/static/img/default_avatar.png");
 		String absolutePath = defaultAvatar.getAbsolutePath();
 		File a=new File(absolutePath);
 

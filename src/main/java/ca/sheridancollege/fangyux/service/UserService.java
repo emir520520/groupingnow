@@ -23,7 +23,9 @@ public interface UserService extends UserDetailsService {
 
 	User getUserById(Long id);
 
-	User updateUser(User user);
+	int updateUser(User user);
+
+	int updateUserWithAvatar(User user);
 
 	void deleteUserById(Long id);
 
@@ -32,6 +34,8 @@ public interface UserService extends UserDetailsService {
 	User getCurrentlyLoggedInUser(Authentication authentication);
 
 	User getUserByEmail(String email);
+
+	String getUserEncryptedPasswordById(Long id);
 
 	//public  User getCurrentlyLoggedInUser(Authentication authentication);
 }

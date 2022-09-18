@@ -54,10 +54,8 @@ public class UserProfileController {
 		this.userDetails =
 				 (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		this.user = userService.getUserByEmail(userDetails.getUsername());
-		
-		byte[] encodeBase64 = Base64.getEncoder().encode(user.getPhoto());
-		String base64Encoded = new String(encodeBase64, "UTF-8");
-		user.setBase64Encoded(base64Encoded);
+
+		user=ImageOperation.attatchBase64ToUser(user);
 		
 		model.addAttribute("originalUser", user);
 
@@ -85,55 +83,38 @@ public class UserProfileController {
 	}
 	
 	@GetMapping("userProfileEdit")
-	public String userProfileEdit(Model model) {
+	public String userProfileEdit(Model model) throws IOException {
 		this.userDetails =
 				 (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		this.user = userService.getUserByEmail(userDetails.getUsername());
 
-		ArrayList<Topic> topics= (ArrayList<Topic>) topicService.getAllTopics();
+		//transfer image type
+		this.user=ImageOperation.attatchBase64ToUser(user);
 
-		model.addAttribute("topics",topics);
 		model.addAttribute("originalUser", this.user);
 		model.addAttribute("user", new User());
 		return ("userProfileEdit");
 	}
 
 	@PostMapping("userProfileEdit")
-	public String userProfileEditSubmit(@ModelAttribute User user, Model model,
-			@RequestParam("image") MultipartFile multipartFile) throws IOException {
-//			User originalUser = userService.getUserByEmail(userDetails.getUsername());
-//			if(user.getFirstName() != "") {
-//				originalUser.setFirstName(user.getFirstName());
-//			}
-//			if(user.getLastName() != "") {
-//				originalUser.setLastName(user.getLastName());
-//			}
-//			if(user.getProgram() != "") {
-//				originalUser.setProgram(user.getProgram());
-//			}
-//			if(multipartFile != null ) {
-//				Blob blob = null;
-//			    byte[] blobAsBytes=null;
-//			    try {
-//			        blob = new SerialBlob(multipartFile.getBytes());
-//
-//			        int blobLength = (int) blob.length();
-//			        blobAsBytes = blob.getBytes(1, blobLength);
-//			        originalUser.setPhoto(blobAsBytes);
-//			    } catch (Exception e) {
-//			        e.printStackTrace();
-//			    }
-//			}
-		//user= ImageOperation.attatchToUser(multipartFile);
+	public String userProfileEditSubmit(User user, Model model,
+			@RequestParam(name="image", required = false) MultipartFile multipartFile) throws IOException {
 
-			
-		userService.saveUser(user);
+		if(multipartFile.isEmpty()){
+			userService.updateUser(user);
+		}else{
+			//Attach image to the user
+			user=ImageOperation.attatchToUser(user, multipartFile);
 
+			userService.updateUserWithAvatar(user);
+		}
 
+		//Get updated user and prepare it for redirection
+		User updatedUser=userService.getUserById(user.getId());
 
+		updatedUser=ImageOperation.attatchBase64ToUser(updatedUser);
 
-
-		//model.addAttribute("originalUser", originalUser);
+		model.addAttribute("originalUser", updatedUser);
 		return ("userProfile");
 	}
 

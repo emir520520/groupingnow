@@ -1,8 +1,10 @@
 package ca.sheridancollege.fangyux.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,7 @@ import ca.sheridancollege.fangyux.repository.EventRepository;
 
 @Service
 public class EventServiceImpl implements EventService{
-	
+
 	@Autowired
 	private EventRepository eventRepository;
 
@@ -56,6 +58,18 @@ public class EventServiceImpl implements EventService{
 		
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 		return this.eventRepository.findAll(pageable);
+	}
+
+	@Override
+	public Page<Event> getEventsPaginated(int pageNo, int pageSize, String scope) {
+
+		if(scope=="all"){
+			Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+			return this.eventRepository.findAll(pageable);
+		}else{
+			Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+			return this.eventRepository.getUserEvents(scope, pageable);
+		}
 	}
 
 	@Override

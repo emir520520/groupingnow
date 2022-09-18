@@ -17,5 +17,7 @@ public interface GroupService {
 
     Page<SchoolGroup> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
 
+    Page<SchoolGroup> getGroupsPaginated(int pageNo, int pageSize, String scope);
+
     void save(SchoolGroup group);
 }

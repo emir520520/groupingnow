@@ -1,14 +1,16 @@
 package ca.sheridancollege.fangyux.web;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Base64;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
+import ca.sheridancollege.fangyux.Utils.ResultEntity;
 import ca.sheridancollege.fangyux.service.EventService;
 import ca.sheridancollege.fangyux.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +21,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.repository.EventRepository;
-import ca.sheridancollege.fangyux.repository.GroupRepository;
 import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @AllArgsConstructor
@@ -37,66 +40,50 @@ public class HomeController {
 	private EventRepository eventRepo;
 	private GroupRepository groupRepo;
 	private UserRepository userRepo;
-	
+
+	@Autowired
+	private EventService eventService;
+
+	@Autowired
+	private GroupService groupService;
+
 	@GetMapping("/")
-	public String goHome(Model model, @AuthenticationPrincipal Authentication authentication) throws 
-	UnsupportedEncodingException {
-		
-	//-------------------------------------------Authentication
-	Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
-	User user = userRepo.findByEmail(auth.getName());
-	
-	if(user!=null) {
-		model.addAttribute("user",user.getFirstName());
-		
-		//--------------------Top two events
-				List<Event> events=eventRepo.getUserEvents(user.getFirstName());
-				
-				for(int i=0;i<events.size();i++) {
-					byte[] encodeBase64 = Base64.getEncoder().encode(events.get(i).getEventImage());
-					String base64Encoded = new String(encodeBase64, "UTF-8");
-					events.get(i).setBase64Encoded(base64Encoded);
-				}
+	public String goHome(Model model, @AuthenticationPrincipal Authentication authentication) throws
+			IOException {
 
-				model.addAttribute("events",events);
-				
-		//--------------------Top two groups
-		List<SchoolGroup> groups=groupRepo.getUserGroup(user.getFirstName());
-		
-		for(int i=0;i<groups.size();i++) {
-			byte[] encodeBase64 = Base64.getEncoder().encode(groups.get(i).getPhoto());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			groups.get(i).setBase64Encoded(base64Encoded);
+		//-------------------------------------------Authentication
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		if(user!=null) {
+			model.addAttribute("user", user.getFirstName());
 		}
 
-		model.addAttribute("groups",groups);
-	}else {
-		//--------------------Top two events
-		List<Event> events=eventRepo.getTwoEvents();
-		
-		for(int i=0;i<events.size();i++) {
-			byte[] encodeBase64 = Base64.getEncoder().encode(events.get(i).getEventImage());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			events.get(i).setBase64Encoded(base64Encoded);
-		}
-
-		model.addAttribute("events",events);
-		
-		//--------------------Top two groups
-		List<SchoolGroup> groups=groupRepo.getTwoGroups();
-		
-		for(int i=0;i<groups.size();i++) {
-			byte[] encodeBase64 = Base64.getEncoder().encode(groups.get(i).getPhoto());
-			String base64Encoded = new String(encodeBase64, "UTF-8");
-			groups.get(i).setBase64Encoded(base64Encoded);
-		}
-
-		model.addAttribute("groups",groups);
+		return "home.html";
 	}
 
-	
-	return "home.html";
-}
+	@RequestMapping("/event/paginated")
+	@ResponseBody
+	public ResultEntity<List<Event>> getEventPaginated(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam(value = "keyword", defaultValue = "")String keyword
+	) throws IOException {
+		Page<Event> eventPage = eventService.getEventsPaginated(pageNum, pageSize, "all");
+
+		List<Event> events = new ArrayList<>();
+
+		eventPage.forEach(entity -> events.add(entity));
+
+		for (int i = 0; i < events.size(); i++) {
+			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
+		}
+
+		Long totalRecords=eventPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
+	}
+  
 	@GetMapping("/findDetailsEvent/{id}")
 	public String goFindDetailEvent(@PathVariable (value = "id") Long id, Model model) throws
 			UnsupportedEncodingException{
@@ -110,6 +97,7 @@ public class HomeController {
 			return "findDetailsEvent.html";
 
 	}
+  
 	@GetMapping("/findDetailsGroup/{id}")
 	public String goFindDetailGroup(@PathVariable (value = "id") Long id, Model model) throws
 			UnsupportedEncodingException{
@@ -118,6 +106,27 @@ public class HomeController {
 		//set group as a model
 		model.addAttribute("groups",group);
 		return "findDetailsGroup.html";
+  }
 
+	@RequestMapping("/group/paginated")
+	@ResponseBody
+	public ResultEntity<List<SchoolGroup>> getGroupPaginated(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam(value = "keyword", defaultValue = "")String keyword
+	) throws IOException {
+		Page<SchoolGroup> groupPage = groupService.getGroupsPaginated(pageNum, pageSize, "all");
+
+		List<SchoolGroup> groups = new ArrayList<>();
+
+		groupPage.forEach(entity -> groups.add(entity));
+
+		for (int i = 0; i < groups.size(); i++) {
+			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
+		}
+
+		Long totalRecords=groupPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(groups, totalRecords);
 	}
 }
