@@ -21,7 +21,7 @@ public class EventServiceImpl implements EventService{
 
 	@Autowired
 	private EventRepository eventRepository;
-	
+
 	@Override
 	public List<Event> getAllEvents(){
 		return eventRepository.findAll();
@@ -75,5 +75,10 @@ public class EventServiceImpl implements EventService{
 	@Override
 	public void save(Event event) {
 		eventRepository.save(event);
+	}
+
+	@Override
+	public long getEventIdByUserId(long userId) {
+		return this.eventRepository.getEventId(userId);
 	}
 }

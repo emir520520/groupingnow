@@ -6,11 +6,15 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import ca.sheridancollege.fangyux.beans.User;
+import ca.sheridancollege.fangyux.service.CartEventServices;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +30,11 @@ import ca.sheridancollege.fangyux.service.EventService;
 
 
 @Controller
+@AllArgsConstructor
 public class EventController {
 
+	@Autowired
+	private CartEventServices cartEventServices;
 	@Autowired
 	private EventService eventService;
 	private UserRepository userRepo;
@@ -36,7 +43,19 @@ public class EventController {
 	public String home(Model model) {
 		return findPaginated(1,"eventName", "asc", model);
 	}
-	
+
+	@GetMapping("/addEventToCart/{eventId}")
+	public String addEventToCart(@PathVariable("eventId") Long eventId, @AuthenticationPrincipal Authentication authentication){
+		try{
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			User user = userRepo.findByEmail(auth.getName());
+			Integer updatedQuantity = cartEventServices.addEvent(eventId, user);
+			return "redirect:/events";
+		} catch(UsernameNotFoundException ex){
+			System.out.println("You must login to add this product to cart");
+			return "You must login to add this product to cart";
+		}
+	}
 	//display list of event
 	@GetMapping("/addEvent")
 	public String showNewEventForm(Model model) {

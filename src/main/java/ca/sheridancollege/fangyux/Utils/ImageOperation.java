@@ -66,7 +66,7 @@ public class ImageOperation {
 
         return blobAsBytes;
     }
-
+    
     public static String transferToBase64(byte[] photo) throws IOException {
         //In case, the object did not have image set
         if(photo==null){
