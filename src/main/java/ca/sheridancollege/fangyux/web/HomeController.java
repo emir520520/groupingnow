@@ -51,32 +51,6 @@ public class HomeController {
 			model.addAttribute("user", user.getFirstName());
 		}
 
-//		//--------------------Top two events
-//		Page<Event> eventPage = eventService.getEventsPaginated(1, 3, "all");
-//
-//		List<Event> events = new ArrayList<>();
-//
-//		eventPage.forEach(entity -> events.add(entity));
-//
-//		for (int i = 0; i < events.size(); i++) {
-//			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
-//		}
-//
-//		model.addAttribute("events", events);
-//
-//		//--------------------Top two groups
-//		Page<SchoolGroup> groupPage = groupService.getGroupsPaginated(1, 3, "all");
-//
-//		List<SchoolGroup> groups = new ArrayList<>();
-//
-//		groupPage.forEach(entity -> groups.add(entity));
-//
-//		for (int i = 0; i < groups.size(); i++) {
-//			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
-//		}
-//
-//		model.addAttribute("groups", groups);
-
 		return "home.html";
 	}
 
