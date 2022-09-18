@@ -1,21 +1,16 @@
 package ca.sheridancollege.fangyux.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
-import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.sheridancollege.fangyux.beans.Event;
-import ca.sheridancollege.fangyux.beans.User;
 import ca.sheridancollege.fangyux.repository.EventRepository;
 
 
@@ -66,5 +61,10 @@ public class EventServiceImpl implements EventService{
 	@Override
 	public void save(Event event) {
 		eventRepository.save(event);
+	}
+
+	@Override
+	public long getEventIdByUserId(long userId) {
+		return this.eventRepository.getEventId(userId);
 	}
 }

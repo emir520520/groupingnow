@@ -1,6 +1,7 @@
 package ca.sheridancollege.fangyux.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	@Query(value="SELECT * FROM event WHERE host_name like %:name% ORDER BY num_of_attendance DESC LIMIT 2",nativeQuery=true)
 	List<Event> getUserEvents(@Param("name")String name);
 
+	@Query(value="SELECT event_id FROM cart_events c WHERE c.user_id= ?1",nativeQuery=true)
+	long getEventId(long userId);
 }

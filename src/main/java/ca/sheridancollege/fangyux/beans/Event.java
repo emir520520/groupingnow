@@ -92,7 +92,10 @@ public class Event {
 		this.numOfAttentdance = numOfAttentdance;
 		this.event_image = eventImage;
 	}
-	
+
+    public Event(Long eventId) {
+    }
+
 //	@Transient
 //    public String getPhotosImagePath() {
 //        if (eventImage == null || id == null) return null;

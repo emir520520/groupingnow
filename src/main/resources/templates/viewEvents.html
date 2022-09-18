@@ -53,18 +53,20 @@
   				</form>
 			</div> 
 		</div>
-
-		<div class="list-group m-5">
-			<h2>Events</h2>
-			<div class="card list-group-item d-flex flex-row" th:each="e : ${listEvents}">
-				<img class="card-img-top" th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}"/>
-				<div class="card-body">
-					<h5 class="card-title" th:text="'Event Name:'+${e.eventName}"></h5>
-					<p class="card-text" th:text="${e.Description}"></p>
-					<a th:href="@{/findDetailsEvent/{id}(id=${e.id})}" class="btn btn-primary">Find Details</a>
+		<!--<form action="#" th:action="@{/addEventToCart}" method="post" th:object="${event}" enctype="multipart/form-data">-->
+			<div class="list-group m-5">
+				<h2>Events</h2>
+				<div class="card list-group-item d-flex flex-row" th:each="e : ${listEvents}">
+					<img class="card-img-top" th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}"/>
+					<div class="card-body">
+						<h5 class="card-title" th:text="'Event Name:'+${e.eventName}"></h5>
+						<p class="card-text" th:text="${e.Description}"></p>
+						<a th:href="@{/addEventToCart/{id}(id=${e.id})}" class="btn btn-info col-2">Pick Event</a>
+					</div>
 				</div>
 			</div>
-		</div>
+		<!--</form>-->
+
 		<!--<table border="1" class="table table-striped table-responsive-md">
 			<thead>
 				<tr>
