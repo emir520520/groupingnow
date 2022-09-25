@@ -164,6 +164,7 @@ function fillGroupCardDeck(list){
         var base64Encoded=list[i].base64Encoded;
         var name=list[i].name;
         var description=list[i].description;
+        var id=list[i].id;
 
         //Image tag
         var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:100%; height: 65%;'>";
@@ -171,7 +172,7 @@ function fillGroupCardDeck(list){
         //Card Body
         var nameH5="<h5 class='card-title'>"+name+"</h5>";
         var descriptionP="<p class='card-text'>"+description+"</p>";
-        var findDetailsA="<a href=\"#\" class=\"btn btn-primary\">Find Details</a>"
+        var findDetailsA="<a href=\"/findDetailsGroup/"+id+"\" class=\"btn btn-primary\">Find Details</a>"
 
         var cardBody="<div class=\"card-body\">"+nameH5+descriptionP+findDetailsA+"</div>";
 

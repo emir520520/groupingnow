@@ -66,7 +66,7 @@
         <p class="card-text" th:text="${e.time}"></p>
         <p class="card-text" th:text="${e.numOfSpot}"></p>
         <p class="card-text" th:text="${e.numOfAttentdance}"></p>
-        <a href="#" class="btn btn-primary">Choose Event</a>
+        <a th:href="@{/addEventToCart/{id}(id=${e.id})}" class="btn btn-info col-2">Pick Event</a>
     </div>
 </div>
 

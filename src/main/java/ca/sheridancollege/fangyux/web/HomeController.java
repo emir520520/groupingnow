@@ -1,12 +1,15 @@
 package ca.sheridancollege.fangyux.web;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.Utils.ResultEntity;
+import ca.sheridancollege.fangyux.repository.EventRepository;
+import ca.sheridancollege.fangyux.repository.GroupRepository;
 import ca.sheridancollege.fangyux.service.EventService;
 import ca.sheridancollege.fangyux.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +44,6 @@ public class HomeController {
 	private GroupRepository groupRepo;
 	private UserRepository userRepo;
 
-	@Autowired
-	private EventService eventService;
-
-	@Autowired
-	private GroupService groupService;
 
 	@GetMapping("/")
 	public String goHome(Model model, @AuthenticationPrincipal Authentication authentication) throws
@@ -86,7 +84,7 @@ public class HomeController {
   
 	@GetMapping("/findDetailsEvent/{id}")
 	public String goFindDetailEvent(@PathVariable (value = "id") Long id, Model model) throws
-			UnsupportedEncodingException{
+			IOException {
 
 
 		Event event = eventService.getEventById(id);
@@ -100,7 +98,7 @@ public class HomeController {
   
 	@GetMapping("/findDetailsGroup/{id}")
 	public String goFindDetailGroup(@PathVariable (value = "id") Long id, Model model) throws
-			UnsupportedEncodingException{
+			IOException {
 		SchoolGroup group = groupService.getGroupById(id);
 		group= ImageOperation.attatchBase64ToGroup(group);
 		//set group as a model

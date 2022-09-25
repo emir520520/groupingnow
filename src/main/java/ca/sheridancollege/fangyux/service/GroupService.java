@@ -20,4 +20,6 @@ public interface GroupService {
     Page<SchoolGroup> getGroupsPaginated(int pageNo, int pageSize, String scope);
 
     void save(SchoolGroup group);
+
+    long getGroupIdByUserId(long userId);
 }

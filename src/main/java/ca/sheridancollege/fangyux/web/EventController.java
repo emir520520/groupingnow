@@ -52,8 +52,8 @@ public class EventController {
 			Integer updatedQuantity = cartEventServices.addEvent(eventId, user);
 			return "redirect:/events";
 		} catch(UsernameNotFoundException ex){
-			System.out.println("You must login to add this product to cart");
-			return "You must login to add this product to cart";
+			System.out.println("You must login to add this event to cart");
+			return "You must login to add this event to cart";
 		}
 	}
 	//display list of event

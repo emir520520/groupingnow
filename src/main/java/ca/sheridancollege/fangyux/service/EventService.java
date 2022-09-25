@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 public interface EventService {
 
 	List<Event> getAllEvents();
+
+	void saveEvent(Event event);
+
 	Event getEventById(long id);
 	void deleteEventById(long id);
 	Page<Event> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
