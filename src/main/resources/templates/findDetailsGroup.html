@@ -52,16 +52,14 @@
 <!--**************************************Body Div*************************************-->
 <h2>Group Details</h2>
 <div class="card list-group-item d-flex flex-row" th:each="g : ${groups}">
-  <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+  <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}" style="width:65%; height:55%"/>
   <div class="card-body">
     <h5 class="card-title" th:text="'Event Name:'+${g.name}"></h5>
-    <p class="card-text" th:text="${g.category}"></p>
-    <p class="card-text" th:text="${g.study}"></p>
-    <p class="card-text" th:text="${g.admins}"></p>
-    <p class="card-text" th:text="${g.invites}"></p>
-    <p class="card-text" th:text="${g.description}"></p>
-    <p class="card-text" th:text="${g.chat}"></p>
-    <a th:href="@{/addGroupToCart/{id}(id=${g.id})}" class="btn btn-info col-2">Pick Group</a>
+    <p class="card-text" th:text="'Category: '+${g.category}"></p>
+    <p class="card-text" th:text="'Study: '+${g.study}"></p>
+    <p class="card-text" th:text="'Host: '+${g.admins}"></p>
+    <p class="card-text" th:text="'Description: '+${g.description}"></p>
+    <a th:href="@{/addGroupToCart/{id}(id=${g.id})}" class="btn btn-info col-4">Pick Group</a>
   </div>
 </div>
 

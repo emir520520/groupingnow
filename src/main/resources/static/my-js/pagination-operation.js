@@ -20,7 +20,6 @@ function getPageInfoEvent(){
         data: {
             "pageNum": window.eventPageNum,
             "pageSize": window.eventPagesize,
-            // "keyword": window.keyword
         },
         dataType: "json",
         async: false,
@@ -52,6 +51,7 @@ function fillEventCardDeck(list){
         var base64Encoded=list[i].base64Encoded;
         var eventName=list[i].eventName;
         var description=list[i].description;
+        var id=list[i].id;
 
         //Image tag
         var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:100%; height: 65%;'>";
@@ -59,8 +59,7 @@ function fillEventCardDeck(list){
         //Card Body
         var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
         var discriptionP="<p class='card-text'>"+description+"</p>";
-        var findDetailsA="<a href=\"#\" class=\"btn btn-primary\">Find Details</a>"
-
+        var findDetailsA="<a href='/findDetailsEvent/"+id+"' class='btn btn-primary'>Find Details</a>"
         var cardBody="<div class=\"card-body\">"+eventNameH5+discriptionP+findDetailsA+"</div>";
 
         //Card
