@@ -20,7 +20,9 @@ public class SchoolGroup {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@NonNull
+	private Long userId;
 	@NonNull
 	private String name;
 	@NonNull

@@ -50,7 +50,7 @@ public class UserProfileController {
 	private User user;
 	
 	@GetMapping("userProfile")
-	public String userProfile(Model model,@AuthenticationPrincipal Authentication authentication) throws UnsupportedEncodingException {
+	public String userProfile(Model model,@AuthenticationPrincipal Authentication authentication) throws IOException {
 		this.userDetails =
 				 (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		this.user = userService.getUserByEmail(userDetails.getUsername());

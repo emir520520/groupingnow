@@ -32,6 +32,9 @@ public interface GroupRepository extends JpaRepository<SchoolGroup, Long> {
 	@Query(value="SELECT * FROM school_group WHERE admins like %:name% LIMIT 2",nativeQuery=true)
 	List<SchoolGroup> getUserGroup(@Param("name")String name);
 
+	@Query(value="SELECT group_id FROM cart_groups c WHERE c.user_id= ?1",nativeQuery=true)
+	long getGroupId(long userId);
+
 	@Query(value="SELECT * FROM school_group WHERE admins like %:name% ORDER BY :#{#pageable}",
 			countQuery = "SELECT count(*) FROM school_group WHERE admins like %:name%",
 			nativeQuery=true)
