@@ -61,18 +61,15 @@ public class EventController {
 	}
 	//display list of event
 	@GetMapping("/addEvent/{groupId}")
-	public String showNewEventForm(Model model) {
-		//Create model attribute to bind from data
-		
-		//store image to database
-		
-		
+	public String showNewEventForm(Model model, @PathVariable("groupId")Long groupId) {
+
 		List<String> typeOfEventList = Arrays.asList("Online","In Person (Indoor)","In Person (Outdoor)");
 		List<String> categoriesList = Arrays.asList("Food", "Music", "Health", "Fashion", "Business", "Sport", "Education", 
 				"Art", "Party", "Entertainment", "Others");
 		
 		model.addAttribute("typeOfEventList",typeOfEventList);
 		model.addAttribute("categoriesList",categoriesList);
+		model.addAttribute("groupId",groupId);
 		
 		Event event = new Event();
 		model.addAttribute("event", event);
@@ -80,7 +77,7 @@ public class EventController {
 	}
 	 
 	@PostMapping("/addEvent/{groupId}")
-    public String addEvent(@PathVariable (value = "groupId") Long groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication){
+    public String addEvent(@PathVariable (value = "groupId") String groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication){
 //		String id = String.valueOf(UUID.randomUUID());
 	    Blob blob = null;
 	    byte[] blobAsBytes=null;
@@ -101,7 +98,9 @@ public class EventController {
 //	    event.getAttendees().add(user);
 	    
 	    System.out.println(event.getEventImage());
-		event.setGroupId(groupId);
+
+		Long groupIdLong=Long.parseLong(groupId);
+		event.setGroupId(groupIdLong);
 		eventRepo.save(event);
 	    
 	    return "viewGroups.html";
