@@ -66,20 +66,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+//		http.cors().and().csrf().disable();
+
+		http.cors().and().csrf().disable()
+				.authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/").permitAll()
 		.antMatchers(HttpMethod.GET, "/registration**").permitAll()
-//		.antMatchers(HttpMethod.GET, "//js/**").permitAll()
-//		.antMatchers(HttpMethod.GET, "/css/**").permitAll()
-//		.antMatchers(HttpMethod.GET, "/images/**").permitAll()
-//		.antMatchers(HttpMethod.GET, "/**/static/**").permitAll()
 		.antMatchers(HttpMethod.GET, "//user/**").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/cart").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/addEvent").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addEvent").hasRole("USER")
-//		.anyRequest().authenticated()
 		.and()
 		.formLogin()
 		.loginPage("/login")
@@ -92,11 +90,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.invalidateHttpSession(true)
 		.clearAuthentication(true)
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//		.logoutSuccessUrl("/login?logout")
 		.logoutSuccessUrl("/")
 		.permitAll();
-		
-		http.csrf().disable();
 	}
 	
 	@Override

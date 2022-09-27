@@ -20,6 +20,7 @@ function getPageInfoEvent(){
         data: {
             "pageNum": window.eventPageNum,
             "pageSize": window.eventPagesize,
+            // "keyword": window.keyword
         },
         dataType: "json",
         async: false,
@@ -171,7 +172,7 @@ function fillGroupCardDeck(list){
         //Card Body
         var nameH5="<h5 class='card-title'>"+name+"</h5>";
         var descriptionP="<p class='card-text'>"+description+"</p>";
-        var findDetailsA="<a href=\"/findDetailsGroup/"+id+"\" class=\"btn btn-primary\">Find Details</a>"
+        var findDetailsA="<a href='findDetailsGroup/"+id+"' class='btn btn-primary'>Find Details</a>"
 
         var cardBody="<div class=\"card-body\">"+nameH5+descriptionP+findDetailsA+"</div>";
 

@@ -30,7 +30,12 @@ public class SchoolGroup {
 	@NonNull
 	private String study;
 
+	@NonNull
 	private String admins;
+
+	@NonNull
+	@Column(name = "admin_id")
+	private Long admin_id;
 	private String invites;
 	@NonNull
 	private String description;

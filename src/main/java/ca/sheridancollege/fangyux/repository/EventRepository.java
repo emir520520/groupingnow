@@ -26,4 +26,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			countQuery = "SELECT count(*) FROM event WHERE host_name like %:name%",
 			nativeQuery=true)
 	Page<Event> getUserEvents(@Param("name")String name, Pageable pageable);
+
+	@Query(value="SELECT * FROM event WHERE group_id=?1",
+			countQuery = "SELECT count(*) FROM event WHERE group_id=?1",
+			nativeQuery=true)
+	Page<Event> getrEventsOfGroup(@Param("groupId")Long groupId, Pageable pageable);
 }

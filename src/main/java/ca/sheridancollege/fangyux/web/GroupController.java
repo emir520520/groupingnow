@@ -3,6 +3,7 @@ package ca.sheridancollege.fangyux.web;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -10,12 +11,12 @@ import java.util.Optional;
 import javax.sql.rowset.serial.SerialBlob;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
+import ca.sheridancollege.fangyux.Utils.ResultEntity;
 import ca.sheridancollege.fangyux.beans.*;
-import ca.sheridancollege.fangyux.service.CartEventServices;
-import ca.sheridancollege.fangyux.service.CartGroupServices;
-import ca.sheridancollege.fangyux.service.GroupService;
-import ca.sheridancollege.fangyux.service.UserService;
+import ca.sheridancollege.fangyux.repository.EventRepository;
+import ca.sheridancollege.fangyux.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,12 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +47,9 @@ public class GroupController {
 	private GroupRepository groupRepo;
 	private UserRepository userRepo;
 
+	@Autowired
+	private EventService eventService;
+
 
 	@GetMapping("/goTrackGroups/{id}")
 	public String goTrackGroup(@PathVariable (value = "id") Long id, Model model) throws
@@ -64,12 +63,39 @@ public class GroupController {
 	@GetMapping("/goTrackMyGroups/{id}")
 	public String goTrackMyGroup(@PathVariable (value = "id") Long id, Model model) throws
 			IOException {
+		//Get Group Info
 		SchoolGroup group = groupService.getGroupById(id);
 		group= ImageOperation.attatchBase64ToGroup(group);
+
 		//set group as a model
 		model.addAttribute("groups",group);
 		return "trackMyGroups.html";
 	}
+
+	@RequestMapping("/eventOfGroup/paginated")
+	@ResponseBody
+	public ResultEntity<List<Event>> getEventsOfGroup(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam(value = "groupId")String groupId
+	) throws IOException {
+		//Get the list of events of the current group
+		Long id=Long.parseLong(groupId);
+		Page<Event> eventPage = eventService.getrEventsOfGroup(pageNum, pageSize, id);
+
+		List<Event> events = new ArrayList<>();
+
+		eventPage.forEach(entity -> events.add(entity));
+
+		for (int i = 0; i < events.size(); i++) {
+			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
+		}
+
+		Long totalRecords=eventPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
+	}
+
 	@GetMapping("/viewGroupFromCart")
 	public String viewGroupFromCart(Model model, @AuthenticationPrincipal Authentication authentication) throws IOException{
 

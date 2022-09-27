@@ -21,6 +21,8 @@ public interface EventService {
 	void deleteEventById(long id);
 	Page<Event> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
 	long getEventIdByUserId(long userId);
-  Page<Event> getEventsPaginated(int pageNo, int pageSize, String scope);
-  void save(Event event);
+  	Page<Event> getEventsPaginated(int pageNo, int pageSize, String scope);
+  	void save(Event event);
+
+    Page<Event> getrEventsOfGroup(int pageNo, int pageSize, Long groupId);
 }
