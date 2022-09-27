@@ -22,4 +22,6 @@ public interface GroupService {
     void save(SchoolGroup group);
 
     long getGroupIdByUserId(long userId);
+
+    List<SchoolGroup> listCartMyGroups(long userId);
 }

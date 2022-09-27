@@ -13,6 +13,7 @@ import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.beans.*;
 import ca.sheridancollege.fangyux.service.CartEventServices;
 import ca.sheridancollege.fangyux.service.CartGroupServices;
+import ca.sheridancollege.fangyux.service.GroupService;
 import ca.sheridancollege.fangyux.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -45,10 +46,30 @@ public class GroupController {
 	private CartGroupServices cartGroupServices;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private GroupService groupService;
 	private GroupRepository groupRepo;
 	private UserRepository userRepo;
 
 
+	@GetMapping("/goTrackGroups/{id}")
+	public String goTrackGroup(@PathVariable (value = "id") Long id, Model model) throws
+			IOException {
+		SchoolGroup group = groupService.getGroupById(id);
+		group= ImageOperation.attatchBase64ToGroup(group);
+		//set group as a model
+		model.addAttribute("groups",group);
+		return "trackGroups.html";
+	}
+	@GetMapping("/goTrackMyGroups/{id}")
+	public String goTrackMyGroup(@PathVariable (value = "id") Long id, Model model) throws
+			IOException {
+		SchoolGroup group = groupService.getGroupById(id);
+		group= ImageOperation.attatchBase64ToGroup(group);
+		//set group as a model
+		model.addAttribute("groups",group);
+		return "trackMyGroups.html";
+	}
 	@GetMapping("/viewGroupFromCart")
 	public String viewGroupFromCart(Model model, @AuthenticationPrincipal Authentication authentication) throws IOException{
 
@@ -62,6 +83,21 @@ public class GroupController {
 			model.addAttribute("user",user);
 			model.addAttribute("cartGroups",cartGroups);
 		return "viewGroups.html";
+	}
+
+	@GetMapping("/viewMyGroupFromCart")
+	public String viewMyGroupFromCart(Model model, @AuthenticationPrincipal Authentication authentication) throws IOException{
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+
+		model.addAttribute("originalUser", user);
+
+		List<SchoolGroup> schoolGroups = groupService.listCartMyGroups(user.getId());
+		model.addAttribute("user",user);
+		model.addAttribute("schoolGroups",schoolGroups);
+		return "viewMyGroups.html";
 	}
 
 	@GetMapping("/addGroupToCart/{groupId}")
