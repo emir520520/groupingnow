@@ -1,6 +1,7 @@
 package ca.sheridancollege.fangyux.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	
 	@Query(value="SELECT * FROM event ORDER BY num_of_attendance LIMIT 2",nativeQuery=true)
 	List<Event> getTwoEvents();
-	
+
+	@Query(value="SELECT event_id FROM cart_events c WHERE c.user_id= ?1",nativeQuery=true)
+	long getEventId(long userId);
+
 	@Query(value="SELECT * FROM event WHERE host_name like %:name% ORDER BY :#{#pageable}",
 			countQuery = "SELECT count(*) FROM event WHERE host_name like %:name%",
 			nativeQuery=true)

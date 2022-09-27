@@ -9,10 +9,19 @@ import java.util.Optional;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
+import ca.sheridancollege.fangyux.beans.*;
+import ca.sheridancollege.fangyux.service.CartEventServices;
+import ca.sheridancollege.fangyux.service.CartGroupServices;
+import ca.sheridancollege.fangyux.service.GroupService;
+import ca.sheridancollege.fangyux.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -25,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import ca.sheridancollege.fangyux.beans.Event;
-import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.repository.GroupRepository;
 import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -34,10 +41,78 @@ import lombok.AllArgsConstructor;
 @Controller
 @AllArgsConstructor
 public class GroupController {
-	
+
+	@Autowired
+	private CartGroupServices cartGroupServices;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private GroupService groupService;
 	private GroupRepository groupRepo;
 	private UserRepository userRepo;
-	
+
+
+	@GetMapping("/goTrackGroups/{id}")
+	public String goTrackGroup(@PathVariable (value = "id") Long id, Model model) throws
+			IOException {
+		SchoolGroup group = groupService.getGroupById(id);
+		group= ImageOperation.attatchBase64ToGroup(group);
+		//set group as a model
+		model.addAttribute("groups",group);
+		return "trackGroups.html";
+	}
+	@GetMapping("/goTrackMyGroups/{id}")
+	public String goTrackMyGroup(@PathVariable (value = "id") Long id, Model model) throws
+			IOException {
+		SchoolGroup group = groupService.getGroupById(id);
+		group= ImageOperation.attatchBase64ToGroup(group);
+		//set group as a model
+		model.addAttribute("groups",group);
+		return "trackMyGroups.html";
+	}
+	@GetMapping("/viewGroupFromCart")
+	public String viewGroupFromCart(Model model, @AuthenticationPrincipal Authentication authentication) throws IOException{
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+
+		model.addAttribute("originalUser", user);
+
+			List<CartGroup> cartGroups = cartGroupServices.listCartGroups(user);
+			model.addAttribute("user",user);
+			model.addAttribute("cartGroups",cartGroups);
+		return "viewGroups.html";
+	}
+
+	@GetMapping("/viewMyGroupFromCart")
+	public String viewMyGroupFromCart(Model model, @AuthenticationPrincipal Authentication authentication) throws IOException{
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+
+		model.addAttribute("originalUser", user);
+
+		List<SchoolGroup> schoolGroups = groupService.listCartMyGroups(user.getId());
+		model.addAttribute("user",user);
+		model.addAttribute("schoolGroups",schoolGroups);
+		return "viewMyGroups.html";
+	}
+
+	@GetMapping("/addGroupToCart/{groupId}")
+	public String addEventToCart(@PathVariable("groupId") Long groupId, @AuthenticationPrincipal Authentication authentication){
+		try{
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			User user = userRepo.findByEmail(auth.getName());
+			Integer updatedParticipants = cartGroupServices.addGroup(groupId, user);
+			return "redirect:/viewGroupFromCart";
+		} catch(UsernameNotFoundException ex){
+			System.out.println("You must login to add this group to cart");
+			return "You must login to add this group to cart";
+		}
+	}
+
 	@GetMapping("/addGroup")
 	public String loadAddGroup(Model model) {
 		model.addAttribute("group", new SchoolGroup());
@@ -62,8 +137,10 @@ public class GroupController {
 	    }
 	    group.setPhoto(blobAsBytes);
 	    
-	    Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
 	    group.setAdmins(userRepo.findByEmail(auth.getName()).getFirstName());
+		group.setUserId(user.getId());
 		groupRepo.save(group);
 		return "redirect:/";
 	}

@@ -31,7 +31,9 @@ public class Event {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@Column(name = "group_id")
+	private Long groupId;
 	@Column(name = "host_name")
 	private String hostName;
 	
@@ -92,7 +94,10 @@ public class Event {
 		this.numOfAttentdance = numOfAttentdance;
 		this.event_image = eventImage;
 	}
-	
+
+    public Event(Long eventId) {
+    }
+
 //	@Transient
 //    public String getPhotosImagePath() {
 //        if (eventImage == null || id == null) return null;
@@ -181,6 +186,9 @@ public class Event {
 	public String getBase64Encoded() {
 		return base64Encoded;
 	}
+
+	public Long getGroupId() {return groupId;}
+	public void setGroupId(Long groupId) {this.groupId = groupId;}
 	
 	public List<User> getAttendees(){
 		return attendees;

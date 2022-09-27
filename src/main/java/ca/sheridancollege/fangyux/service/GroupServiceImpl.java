@@ -64,4 +64,14 @@ public class GroupServiceImpl implements GroupService{
     public void save(SchoolGroup group) {
         groupRepo.save(group);
     }
+
+    @Override
+    public long getGroupIdByUserId(long userId) {
+        return this.groupRepo.getGroupId(userId);
+    }
+
+    @Override
+    public List<SchoolGroup> listCartMyGroups(long userId){
+        return groupRepo.selectUserFromSchoolGroupByUserId(userId);
+    }
 }

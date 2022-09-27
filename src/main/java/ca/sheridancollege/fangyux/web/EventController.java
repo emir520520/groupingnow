@@ -6,11 +6,16 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import ca.sheridancollege.fangyux.beans.User;
+import ca.sheridancollege.fangyux.repository.EventRepository;
+import ca.sheridancollege.fangyux.service.CartEventServices;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,19 +31,36 @@ import ca.sheridancollege.fangyux.service.EventService;
 
 
 @Controller
+@AllArgsConstructor
 public class EventController {
 
 	@Autowired
+	private CartEventServices cartEventServices;
+	@Autowired
 	private EventService eventService;
 	private UserRepository userRepo;
+
+	private EventRepository eventRepo;
 	
 	@GetMapping("/events")
 	public String home(Model model) {
 		return findPaginated(1,"eventName", "asc", model);
 	}
-	
+
+	@GetMapping("/addEventToCart/{eventId}")
+	public String addEventToCart(@PathVariable("eventId") Long eventId, @AuthenticationPrincipal Authentication authentication){
+		try{
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			User user = userRepo.findByEmail(auth.getName());
+			Integer updatedQuantity = cartEventServices.addEvent(eventId, user);
+			return "redirect:/events";
+		} catch(UsernameNotFoundException ex){
+			System.out.println("You must login to add this event to cart");
+			return "You must login to add this event to cart";
+		}
+	}
 	//display list of event
-	@GetMapping("/addEvent")
+	@GetMapping("/addEvent/{groupId}")
 	public String showNewEventForm(Model model) {
 		//Create model attribute to bind from data
 		
@@ -57,8 +79,8 @@ public class EventController {
 		return "newEvent.html";
 	}
 	 
-	@PostMapping("/addEvent")
-    public String addEvent(@ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication){
+	@PostMapping("/addEvent/{groupId}")
+    public String addEvent(@PathVariable (value = "groupId") Long groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication){
 //		String id = String.valueOf(UUID.randomUUID());
 	    Blob blob = null;
 	    byte[] blobAsBytes=null;
@@ -79,9 +101,10 @@ public class EventController {
 //	    event.getAttendees().add(user);
 	    
 	    System.out.println(event.getEventImage());
-	    eventService.save(event);
+		event.setGroupId(groupId);
+		eventRepo.save(event);
 	    
-	    return "redirect:/";
+	    return "viewGroups.html";
 	}
 	
 	@GetMapping("/showFormForUpdate/{id}")

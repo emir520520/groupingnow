@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
+
 
 
 @Repository
@@ -28,9 +28,15 @@ public interface GroupRepository extends JpaRepository<SchoolGroup, Long> {
 	
 	@Query(value="SELECT * FROM school_group ORDER BY description DESC LIMIT 2",nativeQuery=true)
 	List<SchoolGroup> getTwoGroups();
-	
+
+	@Query(value="SELECT * FROM school_group c WHERE c.user_id = ?1 ",nativeQuery = true)
+	List<SchoolGroup> selectUserFromSchoolGroupByUserId(long userId);
+
 	@Query(value="SELECT * FROM school_group WHERE admins like %:name% LIMIT 2",nativeQuery=true)
 	List<SchoolGroup> getUserGroup(@Param("name")String name);
+
+	@Query(value="SELECT group_id FROM cart_groups c WHERE c.user_id= ?1",nativeQuery=true)
+	long getGroupId(long userId);
 
 	@Query(value="SELECT * FROM school_group WHERE admins like %:name% ORDER BY :#{#pageable}",
 			countQuery = "SELECT count(*) FROM school_group WHERE admins like %:name%",

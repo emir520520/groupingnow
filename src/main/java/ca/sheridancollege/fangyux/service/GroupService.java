@@ -2,9 +2,11 @@ package ca.sheridancollege.fangyux.service;
 
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface GroupService {
 
     List<SchoolGroup> getAllGroups();
@@ -18,4 +20,8 @@ public interface GroupService {
     Page<SchoolGroup> getGroupsPaginated(int pageNo, int pageSize, String scope);
 
     void save(SchoolGroup group);
+
+    long getGroupIdByUserId(long userId);
+
+    List<SchoolGroup> listCartMyGroups(long userId);
 }

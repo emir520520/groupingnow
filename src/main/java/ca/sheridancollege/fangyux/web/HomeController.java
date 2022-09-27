@@ -1,11 +1,15 @@
 package ca.sheridancollege.fangyux.web;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.Utils.ResultEntity;
+import ca.sheridancollege.fangyux.repository.EventRepository;
+import ca.sheridancollege.fangyux.repository.GroupRepository;
 import ca.sheridancollege.fangyux.service.EventService;
 import ca.sheridancollege.fangyux.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.beans.User;
 import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,13 +36,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class HomeController {
 
 	@Autowired
-	private UserRepository userRepo;
-
-	@Autowired
 	private EventService eventService;
-
 	@Autowired
 	private GroupService groupService;
+
+	private EventRepository eventRepo;
+	private GroupRepository groupRepo;
+	private UserRepository userRepo;
+
 
 	@GetMapping("/")
 	public String goHome(Model model, @AuthenticationPrincipal Authentication authentication) throws
@@ -75,6 +81,30 @@ public class HomeController {
 
 		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
 	}
+  
+	@GetMapping("/findDetailsEvent/{id}")
+	public String goFindDetailEvent(@PathVariable (value = "id") Long id, Model model) throws
+			IOException {
+
+
+		Event event = eventService.getEventById(id);
+
+		event= ImageOperation.attatchBase64ToEvent(event);
+		//set event as a model
+		model.addAttribute("events",event);
+			return "findDetailsEvent.html";
+
+	}
+  
+	@GetMapping("/findDetailsGroup/{id}")
+	public String goFindDetailGroup(@PathVariable (value = "id") Long id, Model model) throws
+			IOException {
+		SchoolGroup group = groupService.getGroupById(id);
+		group= ImageOperation.attatchBase64ToGroup(group);
+		//set group as a model
+		model.addAttribute("groups",group);
+		return "findDetailsGroup.html";
+  }
 
 	@RequestMapping("/group/paginated")
 	@ResponseBody
