@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <!-- saved from url=(0051)https://getbootstrap.com/docs/4.0/examples/navbars/ -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
@@ -50,7 +51,7 @@
 </nav>
 
 <!--**************************************Body Div*************************************-->
-<h2>Group Details</h2>
+<h2>Group Tracking</h2>
 <div class="card list-group-item" style="width:500px" th:each="g : ${groups}">
   <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
   <div class="card-body">
@@ -61,9 +62,9 @@
     <p class="card-text" th:text="${g.invites}"></p>
     <p class="card-text" th:text="${g.description}"></p>
     <p class="card-text" th:text="${g.chat}"></p>
-    <a th:href="@{/addGroupToCart/{id}(id=${g.id})}" class="btn btn-primary">Pick Group</a>
   </div>
 </div>
+
 
 <!--**************************************Footer*************************************-->
 <footer class="page-footer font-small bg-dark mb-0">

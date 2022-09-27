@@ -28,7 +28,10 @@ public interface GroupRepository extends JpaRepository<SchoolGroup, Long> {
 	
 	@Query(value="SELECT * FROM school_group ORDER BY description DESC LIMIT 2",nativeQuery=true)
 	List<SchoolGroup> getTwoGroups();
-	
+
+	@Query(value="SELECT * FROM school_group c WHERE c.user_id = ?1 ",nativeQuery = true)
+	List<SchoolGroup> selectUserFromSchoolGroupByUserId(long userId);
+
 	@Query(value="SELECT * FROM school_group WHERE admins like %:name% LIMIT 2",nativeQuery=true)
 	List<SchoolGroup> getUserGroup(@Param("name")String name);
 

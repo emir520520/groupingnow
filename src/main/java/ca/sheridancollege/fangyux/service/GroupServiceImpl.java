@@ -69,4 +69,9 @@ public class GroupServiceImpl implements GroupService{
     public long getGroupIdByUserId(long userId) {
         return this.groupRepo.getGroupId(userId);
     }
+
+    @Override
+    public List<SchoolGroup> listCartMyGroups(long userId){
+        return groupRepo.selectUserFromSchoolGroupByUserId(userId);
+    }
 }

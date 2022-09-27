@@ -15,6 +15,8 @@ public interface CartGroupRepository extends JpaRepository<CartGroup, Long> {
 
     public CartGroup findByUserAndGroup(User user, SchoolGroup group);
 
+
+
     @Modifying
     @Query("Update CartGroup c SET c.participants = ?1 WHERE c.user.id = ?2 AND c.group.id = ?3")
     public void updateQuantity(Integer participants, Integer userId, Integer groupId);
