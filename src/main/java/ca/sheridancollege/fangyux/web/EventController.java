@@ -1,11 +1,15 @@
 package ca.sheridancollege.fangyux.web;
 
+import java.io.IOException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import ca.sheridancollege.fangyux.Utils.ImageOperation;
+import ca.sheridancollege.fangyux.Utils.ResultEntity;
 import ca.sheridancollege.fangyux.beans.User;
 import ca.sheridancollege.fangyux.repository.EventRepository;
 import ca.sheridancollege.fangyux.service.CartEventServices;
@@ -18,11 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.sheridancollege.fangyux.beans.Event;
@@ -60,6 +60,7 @@ public class EventController {
 		}
 	}
 	//display list of event
+
 	@GetMapping("/addEvent/{groupId}")
 	public String showNewEventForm(Model model, @PathVariable("groupId")Long groupId) {
 
@@ -91,11 +92,6 @@ public class EventController {
 	    }
 	    
 	    event.setEventImage(blobAsBytes);
-	    
-//	    Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
-//	    System.out.println(auth.getName());
-//		User user = userRepo.findByEmail(auth.getName());
-//	    event.getAttendees().add(user);
 	    
 	    System.out.println(event.getEventImage());
 
@@ -129,11 +125,17 @@ public class EventController {
 			@RequestParam("sortField") String sortField,
 			@RequestParam("sortDir") String sortDir , Model model) {
 		int pageSize = 5;
+
+		//-------------------------------------------Authentication
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		if(user!=null) {
+			model.addAttribute("user", user.getFirstName());
+		}
 	
 		Page<Event> page = eventService.findPaginated(pageNo, pageSize, sortField, sortDir);
 		List<Event> listEvents = page.getContent();
-		
-		//model.addAttribute("listEvent", eventService.getAllEvents());
 		
 		model.addAttribute("currentPage", pageNo);
 		model.addAttribute("totalPages", page.getTotalPages());
@@ -145,7 +147,28 @@ public class EventController {
 		
 		model.addAttribute("listEvents", listEvents);
 		
-		return "viewEvents.html"; 
-		
+		return "viewEvents.html";
+	}
+
+	@RequestMapping("/myEvent/paginated")
+	@ResponseBody
+	public ResultEntity<List<Event>> getEventPaginated(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam(value = "keyword", defaultValue = "")String keyword
+	) throws IOException {
+		Page<Event> eventPage = eventService.getEventsPaginated(pageNum, pageSize, "all");
+
+		List<Event> events = new ArrayList<>();
+
+		eventPage.forEach(entity -> events.add(entity));
+
+		for (int i = 0; i < events.size(); i++) {
+			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
+		}
+
+		Long totalRecords=eventPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
 	}
 }
