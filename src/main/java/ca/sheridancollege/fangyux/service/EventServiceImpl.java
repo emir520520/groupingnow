@@ -82,6 +82,12 @@ public class EventServiceImpl implements EventService{
 	}
 
 	@Override
+	public Page<Event> getEventsByIDs(int pageNum, int pageSize,List<Long> eventIDs) {
+		Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+		return this.eventRepository.getEventsByIDs(eventIDs, pageable);
+	}
+
+	@Override
 	public long getEventIdByUserId(long userId) {
 		return this.eventRepository.getEventId(userId);
 	}

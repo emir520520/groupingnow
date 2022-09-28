@@ -45,7 +45,16 @@ public class EventController {
 	
 	@GetMapping("/events")
 	public String home(Model model) {
-		return findPaginated(1,"eventName", "asc", model);
+		//-------------------------------------------Authentication
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		Long userId=user.getId();
+
+		model.addAttribute("user", user.getFirstName());
+
+
+		return findPaginated(userId,model);
 	}
 
 	@GetMapping("/addEventToCart/{eventId}")
@@ -121,33 +130,8 @@ public class EventController {
 	}
 	
 	@GetMapping("/page/{pageNo}")
-	public String findPaginated(@PathVariable (value="pageNo") int pageNo, 
-			@RequestParam("sortField") String sortField,
-			@RequestParam("sortDir") String sortDir , Model model) {
-		int pageSize = 5;
-
-		//-------------------------------------------Authentication
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userRepo.findByEmail(auth.getName());
-
-		if(user!=null) {
-			model.addAttribute("user", user.getFirstName());
-		}
-
-		Page<Event> page = eventService.findPaginated(pageNo, pageSize, sortField, sortDir);
-		List<Event> listEvents = page.getContent();
-		
-		//model.addAttribute("listEvent", eventService.getAllEvents());
-		
-		model.addAttribute("currentPage", pageNo);
-		model.addAttribute("totalPages", page.getTotalPages());
-		model.addAttribute("totalItems", page.getTotalElements());
-		
-		model.addAttribute("sortField", sortField);
-		model.addAttribute("sortDir", sortDir);
-		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-		
-		model.addAttribute("listEvents", listEvents);
+	public String findPaginated(Long userId, Model model) {
+		model.addAttribute("userId",userId);
 		
 		return "viewEvents.html";
 	}
@@ -157,9 +141,15 @@ public class EventController {
 	public ResultEntity<List<Event>> getEventPaginated(
 			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
-			@RequestParam(value = "keyword", defaultValue = "")String keyword
+			@RequestParam("userId")String Id
 	) throws IOException {
-		Page<Event> eventPage = eventService.getEventsPaginated(pageNum, pageSize, "all");
+		//Get userId
+		Long userId=Long.parseLong(Id);
+
+		//Get Events IDs by userId from cart_events table
+		List<Long> eventIDs=eventRepo.getEventsIDsByUserId(userId);
+
+		Page<Event> eventPage = eventService.getEventsByIDs(pageNum, pageSize, eventIDs);
 
 		List<Event> events = new ArrayList<>();
 

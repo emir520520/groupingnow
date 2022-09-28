@@ -15,9 +15,6 @@ import ca.sheridancollege.fangyux.beans.Event;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
-	
-	@Query(value="SELECT * FROM event ORDER BY num_of_attendance LIMIT 2",nativeQuery=true)
-	List<Event> getTwoEvents();
 
 	@Query(value="SELECT event_id FROM cart_events c WHERE c.user_id= ?1",nativeQuery=true)
 	long getEventId(long userId);
@@ -31,4 +28,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			countQuery = "SELECT count(*) FROM event WHERE group_id=?1",
 			nativeQuery=true)
 	Page<Event> getrEventsOfGroup(@Param("groupId")Long groupId, Pageable pageable);
+
+	@Query(value="SELECT * FROM event WHERE id in :IDs",
+			countQuery = "SELECT count(*) FROM event WHERE id in :IDs",
+			nativeQuery=true)
+	Page<Event> getEventsByIDs(@Param("IDs")List<Long> IDs, Pageable pageable);
+
+	//---------------------------------Operation of cart_events table
+	@Query(value="SELECT event_id FROM cart_events WHERE user_id=:userId",nativeQuery=true)
+	List<Long> getEventsIDsByUserId(@Param("userId")Long userId);
 }

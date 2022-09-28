@@ -79,10 +79,14 @@
       <div class="col-7">
         <div class="row" th:each="g : ${groups}">
           <h2>Event Tracking</h2>
-          <a th:href = "@{/addEvent/{id}(id=${g.id})}" class="btn btn-primary btn-sm mb-3 mt-1" style="margin-left: 60px">Add New Event</a><hr>
+          <a th:href = "@{/addEvent/{id}(id=${g.id})}" class="btn btn-primary btn-sm mb-1 mt-1" style="margin-left: 60px">Add New Event</a><hr>
         </div>
 
-        <div class="row">
+        <div class="row" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;">
           <div class="container" style="margin-left: 100px; margin-right: 100px; margin-top: 90px; " id="event-deck">
           </div>
 

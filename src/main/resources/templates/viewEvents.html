@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-<meta charset="ISO-8859-1">
-<title>My registered Events</title>
+	<meta charset="ISO-8859-1">
+	<title>My registered Events</title>
 
 	<!-- Bootstrap -->
 	<link href="" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
@@ -17,138 +17,168 @@
 	<link rel="stylesheet" href="../static/css/pagination.css" />
 </head>
 <body>
-	<!-- create navigation bar ( header) -->
-	<nav class="navbar navbar-expand-md navbar-dark bg-primary  navbar-fixed-top">
-		<a class="navbar-brand" href="/">Grouping Application</a>
-			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="navbar-nav">
-					<li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/logout">Logout</a></li>
-				</ul>
-			</div>
-			<form class="form-inline">
-				<input class="form-control mr-sm-2" type="text" placeholder="Search">
-      				<button class="btn btn-success my-2 my-sm-0" type="button">Search</button>
-			</form>
-	
-	</nav> 
-  
-	<br>
-	<br>
+<nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
+	<a class="navbar-brand " href="/">Grouping Now</a>
 
-	<div class="container">
-		<h1>Pick Your Group To Join Event</h1>
-		Welcome <span sec:authentication="principal.username"> User</span>
+	<div class="collapse navbar-collapse">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" href="/events">Events</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/viewGroupFromCart">Groups</a>
+			</li>
+			<li class="nav-item" sec:authorize="isAnonymous()">
+				<a class="nav-link" href="/login">Log in</a>
+			</li>
+			<li class="nav-item" sec:authorize="isAuthenticated()">
+				<!--  <span sec:authentication="name">-->
+				<a class="nav-link" href="/userProfile"><span th:text="${user}"></span></a>
+			</li>
+			<li class="nav-item" sec:authorize="isAuthenticated()">
+				<a class="nav-link" href="/logout">Log out</a>
+			</li>
+		</ul>
 	</div>
-	<div align="center" class="container my-2">
-	<h1 align="left">Event List</h1>
-		<div class="row col-sm-10">
-			<div align="left" class="col-sm-2">
-				<a href = "addEvent" class="btn btn-primary btn-sm mb-3">Add New Event</a><hr>
-			</div> 
-			<div align="left" class="col-sm-2">
-				<a th:href = "@{/cart}" class="btn btn-success btn-sm mb-3">Event Cart</a><hr>
-			</div> 
-			<div class="col-sm-2">
-				<form>
-    				<select name="cars" class="custom-select mb-3">
-      					<option selected>Sort By</option>
-      					<option value="@{'/page/' + ${currentPage} + '?sortField=eventName&sortDir=' + ${reverseSortDir}}">Event Name</option>
-      					<option value="@{'/page/' + ${currentPage} + '?sortField=hostName&sortDir=' + ${reverseSortDir}}">Host Name</option>
-  					</select> 
-  				</form>
-			</div> 
-		</div>
-		<!--<form action="#" th:action="@{/addEventToCart}" method="post" th:object="${event}" enctype="multipart/form-data">-->
-			<div class="list-group m-5">
-				<h2>Events</h2>
-				<div class="card list-group-item d-flex flex-row" th:each="e : ${listEvents}">
-					<img class="card-img-top" th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}"/>
-					<div class="card-body">
-						<h5 class="card-title" th:text="'Event Name:'+${e.eventName}"></h5>
-						<p class="card-text" th:text="${e.Description}"></p>
-						<a th:href="@{/addEventToCart/{id}(id=${e.id})}" class="btn btn-info col-2">Pick Event</a>
-					</div>
-				</div>
-			</div>
-		<!--</form>-->
 
-			return res;
+	<div>
+		<form class="form-inline my-md-2">
+			<select class="form-select" aria-label="Default select example">
+				<option selected value="0">Event</option>
+				<option value="1">Group</option>
+			</select>
+			<input class="form-control m-2" type="text" placeholder="Search">
+			<button type="button" class="btn btn-primary">Search</button>
+		</form>
+	</div>
+</nav>
+
+	<div class="row" style="height:18%">
+		<h1>Events registered</h1>
+	</div>
+
+	<div class="row">
+		<div class="card-deck" style="margin-left: 100px; margin-right: 100px; margin-top: 90px;" id="event-deck">
+		</div>
+
+		<div id="Pagination-event" class="pagination" style="display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  text-align: center;
+		margin-top: 60px; margin-bottom: 80px;"></div>
+	</div>
+<script>
+	//??function,?????????function
+	function generateEventPagination(){
+		//??Event????
+		var resultEntity=getPageInfoEvent();
+
+		//??Event??
+		fillEventCardDeck(resultEntity.data);
+
+		//???????????
+		generateNavigationBarEvent(resultEntity);
+	}
+
+	//??pageInfo??
+	function getPageInfoEvent(){
+		var res;
+
+		$.ajax({
+			url: "/myEvent/paginated",
+			type: "post",
+			data: {
+				"pageNum": window.eventPageNum,
+				"pageSize": window.eventPagesize,
+				"userId":	[[${userId}]]
+			},
+			dataType: "json",
+			async: false,
+			success: function(response){
+				res=response;
+			},
+			error: function(response){
+				res=response;
+			}
+		});
+
+		return res;
+	}
+
+	//??????
+	function fillEventCardDeck(list){
+		//??tbody?????
+		$("#event-deck").empty();
+
+		//???????
+		$("#Pagination-event").empty();
+
+		if(list==null || list.length==0){
+			$("#event-deck").append("<tr><td colspan='4'>No data found for you</td></tr>");
+			return;
 		}
+
+		for(var i=0;i<list.length;i++){
+			var base64Encoded=list[i].base64Encoded;
+			var eventName=list[i].eventName;
+			var description=list[i].description;
+
+			//Image tag
+			var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:100%; height: 65%;'>";
+
+			//Card Body
+			var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
+			var discriptionP="<p class='card-text'>"+description+"</p>";
+			var findDetailsA="<a href=\"#\" class=\"btn btn-primary\">Find Details</a>"
+
+			var cardBody="<div class=\"card-body\">"+eventNameH5+discriptionP+findDetailsA+"</div>";
+
+			//Card
+			var card="<div class=\"card\" style='width:320px; height:430px; max-width: 33.33%;'>"+img+cardBody+"</div>";
+
+			$("#event-deck").append(card);
+		}
+	}
+
+	//?????????
+	function generateNavigationBarEvent(resultEntity){
+		//??role?????
+		var totalRecord=resultEntity.totalRecords;
+
+		//????????pagination???????
+		var properties={
+			num_edge_entries: 1,        //?????
+			num_display_entries: 3,     //?????
+			callback: pageSelectCallbackEvent,       //??????????????????
+			items_per_page: window.eventPagesize,
+			current_page: window.eventPageNum-1,   //Pagination????pageIndex(?0?????pageNum?1??
+			prev_text: "Previous",
+			next_text: "Next"
+		};
+
+		$("#Pagination-event").pagination(totalRecord, properties);
+	}
+
+	//??????????????????
+	function pageSelectCallbackEvent(pageIndex, jQuery){
+		//??pageNum
+		window.eventPageNum=pageIndex+1;
 
 		//??????
-		function fillEventCardDeck(list){
-			//??tbody?????
-			$("#event-deck").empty();
+		generateEventPagination();
 
-			//???????
-			$("#Pagination-event").empty();
+		//?????????????????????????????????????????host?contextPath?
+		//?????????????
+		return false;
+	}
 
-			if(list==null || list.length==0){
-				$("#event-deck").append("<tr><td colspan='4'>No data found for you</td></tr>");
-				return;
-			}
+	$(function() {
+		window.eventPageNum = 1;
+		window.eventPagesize = 3;
 
-			for(var i=0;i<list.length;i++){
-				var base64Encoded=list[i].base64Encoded;
-				var eventName=list[i].eventName;
-				var description=list[i].description;
-
-				//Image tag
-				var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:100%; height: 65%;'>";
-
-				//Card Body
-				var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
-				var discriptionP="<p class='card-text'>"+description+"</p>";
-				var findDetailsA="<a href=\"#\" class=\"btn btn-primary\">Find Details</a>"
-
-				var cardBody="<div class=\"card-body\">"+eventNameH5+discriptionP+findDetailsA+"</div>";
-
-				//Card
-				var card="<div class=\"card\" style='width:320px; height:430px; max-width: 33.33%;'>"+img+cardBody+"</div>";
-
-				$("#event-deck").append(card);
-			}
-		}
-
-		//?????????
-		function generateNavigationBarEvent(resultEntity){
-			//??role?????
-			var totalRecord=resultEntity.totalRecords;
-
-			//????????pagination???????
-			var properties={
-				num_edge_entries: 1,        //?????
-				num_display_entries: 3,     //?????
-				callback: pageSelectCallbackEvent,       //??????????????????
-				items_per_page: window.eventPagesize,
-				current_page: window.eventPageNum-1,   //Pagination????pageIndex(?0?????pageNum?1??
-				prev_text: "Previous",
-				next_text: "Next"
-			};
-
-			$("#Pagination-event").pagination(totalRecord, properties);
-		}
-
-		//??????????????????
-		function pageSelectCallbackEvent(pageIndex, jQuery){
-			//??pageNum
-			window.eventPageNum=pageIndex+1;
-
-			//??????
-			generateEventPagination();
-
-			//?????????????????????????????????????????host?contextPath?
-			//?????????????
-			return false;
-		}
-
-		$(function() {
-			window.eventPageNum = 1;
-			window.eventPagesize = 3;
-
-			//??Event????
-			generateEventPagination();
-		});
-	</script>
+		//??Event????
+		generateEventPagination();
+	});
+</script>
 </body>
 </html>

@@ -23,6 +23,6 @@ public interface EventService {
 	long getEventIdByUserId(long userId);
   	Page<Event> getEventsPaginated(int pageNo, int pageSize, String scope);
   	void save(Event event);
-
     Page<Event> getrEventsOfGroup(int pageNo, int pageSize, Long groupId);
+	Page<Event> getEventsByIDs(int PageNum, int pageSize, List<Long> eventIDs);
 }
