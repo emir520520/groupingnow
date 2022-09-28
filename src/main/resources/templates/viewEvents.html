@@ -15,6 +15,21 @@
 	<!--  Pagination Plugin  -->
 	<script type="text/javascript" src="../static/js/jQuery/jquery.pagination.js"></script>
 	<link rel="stylesheet" href="../static/css/pagination.css" />
+
+	<style>
+		.flex-container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.flex-container > div {
+			width: 100%;
+			height: 26vh;
+			margin: 30px;
+			line-height: 75px;
+			font-size: 26px;
+		}
+	</style>
 </head>
 <body>
 <nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
@@ -54,18 +69,22 @@
 </nav>
 
 	<div class="row" style="height:18%">
-		<h1>Events registered</h1>
+		<div class="col-12">
+			<h1 class="ml-5 mt-4">Events registered</h1>
+		</div>
 	</div>
 
 	<div class="row">
-		<div class="card-deck" style="margin-left: 100px; margin-right: 100px; margin-top: 90px;" id="event-deck">
-		</div>
+		<div class="col-12">
+			<div class="card-deck flex-container" style="margin-left: 100px; margin-right: 100px; margin-top: 90px;" id="event-deck">
+			</div>
 
-		<div id="Pagination-event" class="pagination" style="display: flex;
+			<div id="Pagination-event" class="pagination" style="display: flex;
 	  justify-content: center;
 	  align-items: center;
 	  text-align: center;
 		margin-top: 60px; margin-bottom: 80px;"></div>
+		</div>
 	</div>
 <script>
 	//??function,?????????function
@@ -123,8 +142,27 @@
 			var eventName=list[i].eventName;
 			var description=list[i].description;
 
+			// <div className="card mb-3" style="max-width: 540px;">
+			// 	<div className="row no-gutters">
+			// 		<div className="col-md-4">
+			// 			<img src="..." alt="...">
+			// 		</div>
+			// 		<div className="col-md-8">
+			// 			<div className="card-body">
+			// 				<h5 className="card-title">Card title</h5>
+			// 				<p className="card-text">This is a wider card with supporting text below as a natural
+			// 					lead-in to additional content. This content is a little bit longer.</p>
+			// 				<p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
+			// 			</div>
+			// 		</div>
+			// 	</div>
+			// </div>
+
 			//Image tag
-			var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:100%; height: 65%;'>";
+			var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:26%; height: 100%;'>";
+
+			//Image Column
+			var imageCol="<div className=\"col-md-4\">"+img+"</div>";
 
 			//Card Body
 			var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
@@ -133,8 +171,11 @@
 
 			var cardBody="<div class=\"card-body\">"+eventNameH5+discriptionP+findDetailsA+"</div>";
 
+			//Card body Column
+			var cardBodyCol="<div className=\"col-md-8\">"+cardBody+"</div>";
+
 			//Card
-			var card="<div class=\"card\" style='width:320px; height:430px; max-width: 33.33%;'>"+img+cardBody+"</div>";
+			var card="<div class=\"card mb-2\" style='max-height: 23%;'><div className=\"row no-gutters\">"+imageCol+cardBodyCol+"</div></div>";
 
 			$("#event-deck").append(card);
 		}
