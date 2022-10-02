@@ -127,4 +127,28 @@ public class HomeController {
 
 		return ResultEntity.successWithtDataAndTotalRecoreds(groups, totalRecords);
 	}
+
+	@GetMapping("/search")
+	public String gotoSearchEventsPage(
+			@RequestParam("category")String category,
+			@RequestParam("name")String name,
+			Model model){
+		//-------------------------------------------Authentication
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		if(user!=null){
+			model.addAttribute("user", user.getFirstName());
+		}
+
+		if(category.equals("Event")){
+			model.addAttribute("eventName", name);
+
+			return "searchEvents.html";
+		}else{
+			model.addAttribute("groupName", name);
+
+			return "searchGroups.html";
+		}
+	}
 }

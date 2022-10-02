@@ -163,4 +163,27 @@ public class EventController {
 
 		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
 	}
+
+	@PostMapping("/searchEvents")
+	@ResponseBody
+	public ResultEntity<List<Event>> getEventsByName(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam("eventName")String eventName
+	) throws IOException {
+
+		Page<Event> eventPage = eventService.getEventsByName(pageNum, pageSize, eventName);
+
+		List<Event> events = new ArrayList<>();
+
+		eventPage.forEach(entity -> events.add(entity));
+
+		for (int i = 0; i < events.size(); i++) {
+			events.set(i, ImageOperation.attatchBase64ToEvent(events.get(i)));
+		}
+
+		Long totalRecords=eventPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
+	}
 }

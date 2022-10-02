@@ -25,4 +25,6 @@ public interface EventService {
   	void save(Event event);
     Page<Event> getrEventsOfGroup(int pageNo, int pageSize, Long groupId);
 	Page<Event> getEventsByIDs(int PageNum, int pageSize, List<Long> eventIDs);
+
+	Page<Event> getEventsByName(int PageNum, int pageSize, String name);
 }

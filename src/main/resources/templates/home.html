@@ -47,13 +47,13 @@
         </div> 
 
         <div>
-            <form class="form-inline my-md-2">
-                <select class="form-select" aria-label="Default select example">
-                    <option selected value="0">Event</option>
-                    <option value="1">Group</option>
+            <form class="form-inline my-md-2" action="/search">
+                <select class="form-select" aria-label="Default select example" name="category">
+                    <option selected value="Event">Event</option>
+                    <option value="Group">Group</option>
                   </select>
-                <input class="form-control m-2" type="text" placeholder="Search">
-                <button type="button" class="btn btn-primary">Search</button>
+                <input class="form-control m-2" type="text" placeholder="Search" name="name">
+                <button type="submit" class="btn btn-primary">Search</button>
               </form>
         </div>
     </nav>
