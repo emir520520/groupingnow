@@ -245,6 +245,28 @@ public class GroupController {
 		model.addAttribute("schoolgroups", groupRepo.findByOrderByDescriptionAsc());
 		return "viewGroups.html";
 	}
-	
+
+	@PostMapping("/searchGroups")
+	@ResponseBody
+	public ResultEntity<List<SchoolGroup>> getGroupsByName(
+			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
+			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
+			@RequestParam("groupName")String groupName
+	) throws IOException {
+
+		Page<SchoolGroup> groupPage = groupService.getGroupsByName(pageNum, pageSize, groupName);
+
+		List<SchoolGroup> groups = new ArrayList<>();
+
+		groupPage.forEach(entity -> groups.add(entity));
+
+		for (int i = 0; i < groups.size(); i++) {
+			groups.set(i, ImageOperation.attatchBase64ToGroup(groups.get(i)));
+		}
+
+		Long totalRecords=groupPage.getTotalElements();
+
+		return ResultEntity.successWithtDataAndTotalRecoreds(groups, totalRecords);
+	}
 
 }

@@ -43,7 +43,7 @@
   <div class="collapse navbar-collapse">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="/events">Events</a>
+        <a class="nav-link" href="/groups">Group</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/viewGroupFromCart">Groups</a>
@@ -64,7 +64,7 @@
   <div>
     <form class="form-inline my-md-2">
       <select class="form-select" aria-label="Default select example">
-        <option selected value="0">Event</option>
+        <option selected value="0">Group</option>
         <option value="1">Group</option>
       </select>
       <input class="form-control m-2" type="text" placeholder="Search">
@@ -75,16 +75,16 @@
 
 <div class="row" style="height:18%">
   <div class="col-12">
-    <h1 class="ml-5 mt-4">Events Found:</h1>
+    <h1 class="ml-5 mt-4">Groupd Found:</h1>
   </div>
 </div>
 
 <div class="row">
   <div class="col-12">
-    <div class="card-deck flex-container" id="event-deck">
+    <div class="card-deck flex-container" id="group-deck">
     </div>
 
-    <div id="Pagination-event" class="pagination" style="display: flex;
+    <div id="Pagination-group" class="pagination" style="display: flex;
 	  justify-content: center;
 	  align-items: center;
 	  text-align: center;
@@ -93,28 +93,28 @@
 </div>
 <script>
   //??function,?????????function
-  function generateEventPagination(){
-    //??Event????
-    var resultEntity=getPageInfoEvent();
+  function generateGroupPagination(){
+    //??Group????
+    var resultEntity=getPageInfoGroup();
 
-    //??Event??
-    fillEventCardDeck(resultEntity.data);
+    //??Group??
+    fillGroupCardDeck(resultEntity.data);
 
     //???????????
-    generateNavigationBarEvent(resultEntity);
+    generateNavigationBarGroup(resultEntity);
   }
 
   //??pageInfo??
-  function getPageInfoEvent(){
-    var res;
+  function getPageInfoGroup(){
+    var res ="[[${groupName}]]";
 
     $.ajax({
-      url: "/",
+      url: "/searchGroups",
       type: "post",
       data: {
-        "pageNum": window.eventPageNum,
-        "pageSize": window.eventPagesize,
-        "eventName":	[[${eventName}]]
+        "pageNum": window.groupPageNum,
+        "pageSize": window.groupPagesize,
+        "groupName":	"[[${groupName}]]"
       },
       dataType: "json",
       async: false,
@@ -130,35 +130,35 @@
   }
 
   //??????
-  function fillEventCardDeck(list){
+  function fillGroupCardDeck(list){
     //??tbody?????
-    $("#event-deck").empty();
+    $("#group-deck").empty();
 
     //???????
-    $("#Pagination-event").empty();
+    $("#Pagination-group").empty();
 
     if(list==null || list.length==0){
-      $("#event-deck").append("<tr><td colspan='4'>No data found for you</td></tr>");
+      $("#group-deck").append("<tr><td colspan='4'>No data found for you</td></tr>");
       return;
     }
 
     for(var i=0;i<list.length;i++){
       var base64Encoded=list[i].base64Encoded;
-      var eventName=list[i].eventName;
+      var groupName=list[i].groupName;
       var description=list[i].description;
 
       //Image tag
-      var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Event Image' style='width:66%; height: 100%;'>";
+      var img="<img src='data:image/jpeg;base64,"+base64Encoded+"' class='card-img-top' alt='Group Image' style='width:66%; height: 100%;'>";
 
       //Image Column
       var imageCol="<div className=\"col-4\" style='height:100%; width:40%'>"+img+"</div>";
 
       //Card Body
-      var eventNameH5="<h5 class='card-title' style='height:15%'>"+eventName+"</h5>";
+      var groupNameH5="<h5 class='card-title' style='height:15%'>"+groupName+"</h5>";
       var discriptionP="<p class='card-text' style='height:35%'>"+description+"</p>";
       var findDetailsA="<a href=\"#\" class=\"btn btn-primary\">Find Details</a>"
 
-      var cardBody="<div class=\"card-body\" style='height:100%'>"+eventNameH5+discriptionP+findDetailsA+"</div>";
+      var cardBody="<div class=\"card-body\" style='height:100%'>"+groupNameH5+discriptionP+findDetailsA+"</div>";
 
       //Card body Column
       var cardBodyCol="<div className=\"col-8\" style='height:100%; width:60%'>"+cardBody+"</div>";
@@ -166,12 +166,12 @@
       //Card
       var card="<div class=\"card\"><div class=\"row\" style='max-height: 100%'>"+imageCol+cardBodyCol+"</div></div>";
 
-      $("#event-deck").append(card);
+      $("#group-deck").append(card);
     }
   }
 
   //?????????
-  function generateNavigationBarEvent(resultEntity){
+  function generateNavigationBarGroup(resultEntity){
     //??role?????
     var totalRecord=resultEntity.totalRecords;
 
@@ -179,23 +179,23 @@
     var properties={
       num_edge_entries: 1,        //?????
       num_display_entries: 3,     //?????
-      callback: pageSelectCallbackEvent,       //??????????????????
-      items_per_page: window.eventPagesize,
-      current_page: window.eventPageNum-1,   //Pagination????pageIndex(?0?????pageNum?1??
+      callback: pageSelectCallbackGroup,       //??????????????????
+      items_per_page: window.groupPagesize,
+      current_page: window.groupPageNum-1,   //Pagination????pageIndex(?0?????pageNum?1??
       prev_text: "Previous",
       next_text: "Next"
     };
 
-    $("#Pagination-event").pagination(totalRecord, properties);
+    $("#Pagination-group").pagination(totalRecord, properties);
   }
 
   //??????????????????
-  function pageSelectCallbackEvent(pageIndex, jQuery){
+  function pageSelectCallbackGroup(pageIndex, jQuery){
     //??pageNum
-    window.eventPageNum=pageIndex+1;
+    window.groupPageNum=pageIndex+1;
 
     //??????
-    generateEventPagination();
+    generateGroupPagination();
 
     //?????????????????????????????????????????host?contextPath?
     //?????????????
@@ -203,11 +203,11 @@
   }
 
   $(function() {
-    window.eventPageNum = 1;
-    window.eventPagesize = 3;
+    window.groupPageNum = 1;
+    window.groupPagesize = 3;
 
     //??Event????
-    generateEventPagination();
+    generateGroupPagination();
   });
 </script>
 </body>

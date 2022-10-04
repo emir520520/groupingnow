@@ -9,6 +9,8 @@
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
 	crossorigin="anonymous">
+	
+<script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
 
 </head>
 <body>
@@ -17,7 +19,7 @@
 		<hr>
 		<h2>Save Event</h2>
 		
-		<form th:action="@{/addEvent/}+${groupId}" th:object="${event}" method="POST" enctype="multipart/form-data">
+		<form action="#" th:action="@{/addEvent/}+${groupId}" th:object="${event}" method="POST" enctype="multipart/form-data">
 			<div class="form-group">
 				<label class="control-label" for="eventName"> Event Name: </label>
 				<input type="text" th:field="*{eventName}" placeholder="Event Name" class="form-control mb-4 col-4">

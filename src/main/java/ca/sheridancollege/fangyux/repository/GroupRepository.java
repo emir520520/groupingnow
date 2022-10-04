@@ -42,4 +42,9 @@ public interface GroupRepository extends JpaRepository<SchoolGroup, Long> {
 			countQuery = "SELECT count(*) FROM school_group WHERE admins like %:name%",
 			nativeQuery=true)
 	Page<SchoolGroup> getUserGroups(@Param("name")String name, Pageable pageable);
+
+	@Query(value="SELECT * FROM school_group WHERE name LIKE %:name%",
+			countQuery = "SELECT count(*) FROM school_group WHERE name LIKE %:name%",
+			nativeQuery=true)
+	Page<SchoolGroup> getGroupsByName(@Param("name")String name, Pageable pageable);
 }

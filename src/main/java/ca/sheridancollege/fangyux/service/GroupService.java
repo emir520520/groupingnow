@@ -1,5 +1,6 @@
 package ca.sheridancollege.fangyux.service;
 
+import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -24,4 +25,6 @@ public interface GroupService {
     long getGroupIdByUserId(long userId);
 
     List<SchoolGroup> listCartMyGroups(long userId);
+
+    Page<SchoolGroup> getGroupsByName(int pageNum, int pageSize, String name);
 }
