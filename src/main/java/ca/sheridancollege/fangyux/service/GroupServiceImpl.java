@@ -1,5 +1,6 @@
 package ca.sheridancollege.fangyux.service;
 
+import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +74,11 @@ public class GroupServiceImpl implements GroupService{
     @Override
     public List<SchoolGroup> listCartMyGroups(long userId){
         return groupRepo.selectUserFromSchoolGroupByUserId(userId);
+    }
+
+    @Override
+    public Page<SchoolGroup> getGroupsByName(int pageNum, int pageSize, String name) {
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        return this.groupRepo.getGroupsByName(name, pageable);
     }
 }
