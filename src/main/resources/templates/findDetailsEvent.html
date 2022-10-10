@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
 
+    <!--  jQuery  -->
+    <script type="text/javascript" src="../static/js/jQuery/jquery-2.1.1.min.js"></script>
+
     <!-- Bootstrap -->
     <link href="" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!--layer plugin-->
+    <script src="../static/layer-v3.1.1/layer/layer.js"></script>
 <body>
 
 <nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
@@ -17,10 +23,10 @@
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/events">Events</a>
+                <a class="nav-link" href="/events" id="aEvent">Events</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/viewGroups">Groups</a>
+                <a class="nav-link" href="/viewGroups" id="aGroup">Groups</a>
             </li>
             <li class="nav-item" sec:authorize="isAnonymous()">
                 <a class="nav-link" href="/login">Log in</a>
@@ -62,7 +68,7 @@
         <p class="card-text" th:text="'Time: '+${e.time}"></p>
         <p class="card-text" th:text="'Number of Spot: '+${e.numOfSpot}"></p>
         <p class="card-text" th:text="'Number of attendence: '+${e.numOfAttentdance}"></p>
-        <a th:href="@{/addEventToCart/{id}(id=${e.id})}" class="btn btn-info col-4">Pick Event</a>
+        <a th:href="@{/addEventToCart/{id}(id=${e.id})}" class="btn btn-info col-4" id="aPick">Pick Event</a>
     </div>
 </div>
 
@@ -72,5 +78,36 @@
         <a >groupingnow.ca</a>
     </div>
 </footer>
+
+<script type="text/javascript">
+    $(function() {
+        window.user='[[${user}]]'
+        window.cart='[[${cart}]]'
+    });
+
+    $("#aPick").click(function (event){
+        if(window.user===''){
+            event.preventDefault();
+            layer.msg("Please login first!");
+        }else if(window.cart=='picked'){
+            event.preventDefault();
+            layer.msg("You have already picked this event");
+        }
+    });
+
+    $("#aEvent").click(function (event){
+        if(window.user===''){
+            event.preventDefault();
+            layer.msg("Please login first!");
+        }
+    });
+
+    $("#aGroup").click(function (event){
+        if(window.user===''){
+            event.preventDefault();
+            layer.msg("Please login first!");
+        }
+    });
+</script>
 </body>
 </html>

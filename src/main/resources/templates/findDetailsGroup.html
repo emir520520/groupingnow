@@ -11,6 +11,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <!--  jQuery  -->
   <script type="text/javascript" src="../static/js/jQuery/jquery-2.1.1.min.js"></script>
+  <!--layer plugin-->
+  <script src="../static/layer-v3.1.1/layer/layer.js"></script>
 <body>
 
 <nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
@@ -19,10 +21,10 @@
   <div class="collapse navbar-collapse">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="/events">Events</a>
+        <a class="nav-link" href="/events" id="aEvent">Events</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/viewGroups">Groups</a>
+        <a class="nav-link" href="/viewGroups" id="aGroup">Groups</a>
       </li>
       <li class="nav-item" sec:authorize="isAnonymous()">
         <a class="nav-link" href="/login">Log in</a>
@@ -59,7 +61,7 @@
     <p class="card-text" th:text="'Study: '+${g.study}"></p>
     <p class="card-text" th:text="'Host: '+${g.admins}"></p>
     <p class="card-text" th:text="'Description: '+${g.description}"></p>
-    <a th:href="@{/addGroupToCart/{id}(id=${g.id})}" class="btn btn-info col-4">Pick Group</a>
+    <a th:href="@{/addGroupToCart/{id}(id=${g.id})}" class="btn btn-info col-4" id="aPick">Pick Group</a>
   </div>
 </div>
 
@@ -69,5 +71,36 @@
     <a >groupingnow.ca</a>
   </div>
 </footer>
+
+<script type="text/javascript">
+  $(function() {
+    window.user='[[${user}]]'
+    window.cart='[[${cart}]]'
+  });
+
+  $("#aPick").click(function (event){
+    if(window.user===''){
+      event.preventDefault();
+      layer.msg("Please login first!");
+    }else if(window.cart=='picked'){
+      event.preventDefault();
+      layer.msg("You have already picked this group");
+    }
+  });
+
+  $("#aEvent").click(function (event){
+    if(window.user===''){
+      event.preventDefault();
+      layer.msg("Please login first!");
+    }
+  });
+
+  $("#aGroup").click(function (event){
+    if(window.user===''){
+      event.preventDefault();
+      layer.msg("Please login first!");
+    }
+  });
+</script>
 </body>
 </html>

@@ -8,8 +8,7 @@ import java.util.Optional;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.Utils.ResultEntity;
-import ca.sheridancollege.fangyux.repository.EventRepository;
-import ca.sheridancollege.fangyux.repository.GroupRepository;
+import ca.sheridancollege.fangyux.repository.*;
 import ca.sheridancollege.fangyux.service.EventService;
 import ca.sheridancollege.fangyux.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,8 +38,11 @@ public class HomeController {
 	@Autowired
 	private GroupService groupService;
 
-	private EventRepository eventRepo;
-	private GroupRepository groupRepo;
+	@Autowired
+	private CartEventRepository cartEventRepo;
+
+	@Autowired
+	private CartGroupRepository cartGroupRepo;
 	private UserRepository userRepo;
 
 
@@ -85,7 +86,22 @@ public class HomeController {
 	@GetMapping("/findDetailsEvent/{id}")
 	public String goFindDetailEvent(@PathVariable (value = "id") Long id, Model model) throws
 			IOException {
+		//-------------------------------------------Authentication for verify to prevent user clicks pick btn
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
 
+		if(user!=null) {
+			model.addAttribute("user", user.getFirstName());
+
+			//--------------------------------------------If the current event is picked already, display some msg in the front-end
+			int result=cartEventRepo.checkCartEventOfUser(id, user.getId());
+
+			if(result==1){
+				model.addAttribute("cart","picked");
+			}else{
+				model.addAttribute("cart","not");
+			}
+		}
 
 		Event event = eventService.getEventById(id);
 
@@ -99,6 +115,23 @@ public class HomeController {
 	@GetMapping("/findDetailsGroup/{id}")
 	public String goFindDetailGroup(@PathVariable (value = "id") Long id, Model model) throws
 			IOException {
+		//-------------------------------------------Authentication for verify to prevent user clicks pick btn
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		if(user!=null) {
+			model.addAttribute("user", user.getFirstName());
+
+			//--------------------------------------------If the current event is picked already, display some msg in the front-end
+			int result=cartGroupRepo.checkCartGroupOfUser(id, user.getId());
+
+			if(result==1){
+				model.addAttribute("cart","picked");
+			}else{
+				model.addAttribute("cart","not");
+			}
+		}
+
 		SchoolGroup group = groupService.getGroupById(id);
 		group= ImageOperation.attatchBase64ToGroup(group);
 		//set group as a model

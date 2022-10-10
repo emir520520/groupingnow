@@ -20,6 +20,9 @@
     <!--  Pagination js file  -->
     <script type="text/javascript" src="../static/my-js/pagination-operation.js"></script>
 
+    <!--layer plugin-->
+    <script src="../static/layer-v3.1.1/layer/layer.js"></script>
+
   <body>
 
     <nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
@@ -28,10 +31,10 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/events">Events</a>
+            <a class="nav-link" href="/events" id="aEvent">Events</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/viewGroupFromCart">Groups</a>
+            <a class="nav-link" href="/viewGroupFromCart" id="aGroup">Groups</a>
           </li>
           <li class="nav-item" sec:authorize="isAnonymous()">
             <a class="nav-link" href="/login">Log in</a>
@@ -88,6 +91,8 @@
 
 <script type="text/javascript">
     $(function() {
+        window.user='[[${user}]]'
+
         window.eventPageNum = 1;
         window.eventPagesize = 3;
 
@@ -99,6 +104,20 @@
 
         //调用Group分页函数
         generateGroupPagination();
+    });
+
+    $("#aEvent").click(function (event){
+        if(window.user===''){
+            event.preventDefault();
+            layer.msg("Please login first!");
+        }
+    });
+
+    $("#aGroup").click(function (event){
+        if(window.user===''){
+            event.preventDefault();
+            layer.msg("Please login first!");
+        }
     });
 </script>
 </body>

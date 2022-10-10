@@ -24,4 +24,7 @@ public interface CartEventRepository extends JpaRepository<CartEvent, Long> {
     @Modifying
     @Query("DELETE FROM CartEvent c WHERE c.user.id = ?1 AND c.event.id = ?2")
     public void deleteByUserAndEvent(User user, Event event);
+
+    @Query(value ="SELECT COUNT(*) FROM cart_events WHERE event_id=?1 AND user_id=?2", nativeQuery = true)
+    public int checkCartEventOfUser(Long eventId, Long userId);
 }
