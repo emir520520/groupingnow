@@ -2,10 +2,10 @@ package ca.sheridancollege.fangyux.web;
 
 import java.io.IOException;
 import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import javax.mail.*;
+import javax.mail.internet.*;
 import javax.sql.rowset.serial.SerialBlob;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
@@ -58,9 +58,25 @@ public class EventController {
 	}
 
 	@GetMapping("/addEventToCart/{eventId}")
-	public String addEventToCart(@PathVariable("eventId") Long eventId, @AuthenticationPrincipal Authentication authentication){
+	public String addEventToCart(@PathVariable("eventId") Long eventId, @AuthenticationPrincipal Authentication authentication) throws AddressException, MessagingException, IOException{
 		try{
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			//get event information
+			Event event = eventService.getEventById(eventId);
+			String content;
+			content =
+					"You have joined successfully event: " +
+					"\nEvent name: " + event.getEventName() +
+					"\nDescription: " + event.getDescription() +
+					"\nHost name: " + event.getHostName() +
+					"\nType of Event: " + event.getTypeOfEvent() +
+					"\nCategory: " + event.getCategory() +
+					"\nLocation: " + event.getLocation() +
+					"\nDate: " +event.getDate() +
+					"\nTime: " + event.getTime();
+			//send email to user with event information
+			sendmail(auth.getName(), content);
+
 			User user = userRepo.findByEmail(auth.getName());
 			Integer updatedQuantity = cartEventServices.addEvent(eventId, user);
 			return "redirect:/events";
@@ -185,5 +201,36 @@ public class EventController {
 		Long totalRecords=eventPage.getTotalElements();
 
 		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
+	}
+
+	private void sendmail(String email, String content) throws AddressException, MessagingException, IOException {
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("lambich1999@gmail.com", "cmftzoqqgiglmfgi");
+			}
+		});
+
+		Message msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress("lambich1999@gmail.com", false));
+
+		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+		msg.setSubject("Event information email");
+		msg.setContent(content, "text/html");
+		msg.setSentDate(new Date());
+
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent(content, "text/html");
+
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+		MimeBodyPart attachPart = new MimeBodyPart();
+
+		Transport.send(msg);
 	}
 }
