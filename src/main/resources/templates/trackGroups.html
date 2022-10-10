@@ -51,17 +51,43 @@
 </nav>
 
 <!--**************************************Body Div*************************************-->
-<h2>Group Tracking</h2>
-<div class="card list-group-item" style="width:500px" th:each="g : ${groups}">
-  <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
-  <div class="card-body">
-    <h5 class="card-title" th:text="'Event Name:'+${g.name}"></h5>
-    <p class="card-text" th:text="${g.category}"></p>
-    <p class="card-text" th:text="${g.study}"></p>
-    <p class="card-text" th:text="${g.admins}"></p>
-    <p class="card-text" th:text="${g.invites}"></p>
-    <p class="card-text" th:text="${g.description}"></p>
-    <p class="card-text" th:text="${g.chat}"></p>
+<div class="container-fluid">
+  <div class="row mt-2 ml-2 mr-2 mb-2">
+    <div class="col-5">
+      <h2>Group Tracking</h2>
+      <div class="card list-group-item" style="width:500px" th:each="g : ${groups}">
+        <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+        <div class="card-body">
+          <h5 class="card-title" th:text="'Event Name:'+${g.name}"></h5>
+          <p class="card-text" th:text="${g.category}"></p>
+          <p class="card-text" th:text="${g.study}"></p>
+          <p class="card-text" th:text="${g.admins}"></p>
+          <p class="card-text" th:text="${g.invites}"></p>
+          <p class="card-text" th:text="${g.description}"></p>
+          <p class="card-text" th:text="${g.chat}"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-7">
+      <div class="row">
+        <h2>Event Tracking</h2>
+      </div>
+      <div class="row" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;">
+      <div class="container" style="margin-left: 100px; margin-right: 100px; margin-top: 90px; " id="event-deck">
+
+      </div>
+        <div id="Pagination-event" class="pagination" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -72,5 +98,115 @@
     <a >groupingnow.ca</a>
   </div>
 </footer>
+<!-- ******************************************************************************** -->
+<script>
+  //总的function,用来调用各个细分的function
+  function generateEventPagination(){
+    //获取Event分页数据
+    var resultEntity=getPageInfoEvent();
+
+    //填充Event表格
+    fillEventCardDeck(resultEntity.data);
+
+    //调用分页导航栏生成函数
+    generateNavigationBarEvent(resultEntity);
+  }
+
+  //获取pageInfo函数
+  function getPageInfoEvent(){
+    var res;
+
+    $.ajax({
+      url: "/eventOfGroup/paginated",
+      type: "post",
+      data: {
+        "pageNum": window.eventPageNum,
+        "pageSize": window.eventPagesize,
+        "groupId": [[${groups.id}]]
+      },
+      dataType: "json",
+      async: false,
+      success: function(response){
+        res=response;
+      },
+      error: function(response){
+        res=response;
+      }
+    });
+
+    return res;
+  }
+
+  //生成表格函数
+  function fillEventCardDeck(list){
+    //清除tbody中原有数据
+    $("#event-deck").empty();
+
+    //清空分页导航条
+    $("#Pagination-event").empty();
+
+    if(list==null || list.length==0){
+      $("#event-deck").append("<tr><td colspan='4'>No data found for you</td></tr>");
+      return;
+    }
+
+    for(var i=0;i<list.length;i++){
+      var eventName=list[i].eventName;
+      var description=list[i].description;
+      var id=list[i].id;
+
+      //Card Body
+      var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
+      var discriptionP="<p class='card-text'>"+description+"</p>";
+      var findDetailsA="<a href='/findDetailsEvent/"+id+"' class='btn btn-primary'>Find Details</a>"
+      var cardBody="<div class=\"card-body\" style=''>"+eventNameH5+discriptionP+findDetailsA+"</div>";
+
+      //Card
+      var card="<div class=\"card\">"+cardBody+"</div>";
+
+      $("#event-deck").append(card);
+    }
+  }
+
+  //分页导航栏生成函数
+  function generateNavigationBarEvent(resultEntity){
+    //获得role记录的总数
+    var totalRecord=resultEntity.totalRecords;
+
+    //声明一个属性设置pagination函数所需的属性
+    var properties={
+      num_edge_entries: 1,        //边缘页数量
+      num_display_entries: 3,     //主体页数量
+      callback: pageSelectCallbackEvent,       //用户点击页码时，调用这个函数进行跳转
+      items_per_page: window.eventPagesize,
+      current_page: window.eventPageNum-1,   //Pagination内部使用pageIndex(从0开始），而pageNum从1开始
+      prev_text: "Previous",
+      next_text: "Next"
+    };
+
+    $("#Pagination-event").pagination(totalRecord, properties);
+  }
+
+  //用户点击页码时，调用这个函数进行跳转
+  function pageSelectCallbackEvent(pageIndex, jQuery){
+    //计算pageNum
+    window.eventPageNum=pageIndex+1;
+
+    //调用分页函数
+    generateEventPagination();
+
+    //由于每一个页码按钮都是超链接，它默认跳转到上面的地址，但是那是不正确的，因为没有加host和contextPath。
+    //我们要取消超链接的默认行为
+    return false;
+  }
+
+  $(function() {
+    window.eventPageNum = 1;
+    window.eventPagesize = 4;
+
+    //调用Event分页函数
+    generateEventPagination();
+  });
+</script>
 </body>
 </html>
