@@ -212,12 +212,12 @@ public class EventController {
 
 		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("lambich1999@gmail.com", "cmftzoqqgiglmfgi");
+				return new PasswordAuthentication("applicationgroupnow@gmail.com", "xzmaodwcvgqoctpt");
 			}
 		});
 
 		Message msg = new MimeMessage(session);
-		msg.setFrom(new InternetAddress("lambich1999@gmail.com", false));
+		msg.setFrom(new InternetAddress("applicationgroupnow@gmail.com", false));
 
 		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
 		msg.setSubject("Event information email");

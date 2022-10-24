@@ -54,8 +54,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(userService);
+        auth.setUserDetailsService(userDetailsService());
         auth.setPasswordEncoder(passwordEncoder());
+
         return auth;
     }
 	
@@ -66,7 +67,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-//		http.cors().and().csrf().disable();
 
 		http.cors().and().csrf().disable()
 				.authorizeRequests()
@@ -74,17 +74,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.antMatchers(HttpMethod.GET, "/registration**").permitAll()
 		.antMatchers(HttpMethod.GET, "//user/**").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/cart").hasRole("USER")
-		.antMatchers(HttpMethod.GET, "/addGroup").hasRole("USER")
+		//.antMatchers(HttpMethod.GET, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/addEvent").hasRole("USER")
-		.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
+		//.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addEvent").hasRole("USER")
+		//.anyRequest().authenticated()
 		.and()
 		.formLogin()
-		.loginPage("/login")
-		.usernameParameter("email")
-		.permitAll()
-		.defaultSuccessUrl("/")
-		.successHandler(customAuthenticationSuccessHandler)
+			.loginPage("/login")
+			.usernameParameter("email")
+			.permitAll()
+			.defaultSuccessUrl("/")
+			.successHandler(customAuthenticationSuccessHandler)
+			.failureHandler(customAuthenticationFailureHandler)
 		.and()
 		.logout()
 		.invalidateHttpSession(true)
@@ -92,6 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 		.logoutSuccessUrl("/")
 		.permitAll();
+
 	}
 	
 	@Override
@@ -101,5 +104,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
+	@Autowired
+	private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
 }

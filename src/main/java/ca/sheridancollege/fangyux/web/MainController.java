@@ -1,6 +1,7 @@
 package ca.sheridancollege.fangyux.web;
 
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
+import ca.sheridancollege.fangyux.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,14 +32,20 @@ public class MainController {
 	
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserRepository userrepo;
 	
 	@GetMapping("/login")
 	public String login() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		 
-		if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+
+		if(authentication == null || authentication instanceof AnonymousAuthenticationToken ) {
 			return "login";
 		}
-		return "redirect:/";
+		else
+		{
+			return "redirect:/";
+
+		}
 	}
 } 

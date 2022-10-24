@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.DisabledException;
 
 import ca.sheridancollege.fangyux.beans.Role;
 import ca.sheridancollege.fangyux.beans.User;
@@ -15,7 +16,7 @@ import ca.sheridancollege.fangyux.beans.User;
 public class StudentUserDetails implements UserDetails {
 
 	private User user;
-	
+
 	public StudentUserDetails(User user) {
 		this.user = user;
 	}
@@ -35,21 +36,24 @@ public class StudentUserDetails implements UserDetails {
 	public String getPassword() {
 		return user.getPassword();
 	}
-	
+
 	public String getEmail() {
 		return user.getEmail();
 	}
-	
+
 	public User getUser() {
 		return this.user;
 	}
 	
 
-	@Override
+	/*@Override
 	public String getUsername() {
 		return user.getFirstName() + " " + user.getLastName();
+	}*/
+	@Override
+	public String getUsername() {
+		return user.getEmail();
 	}
-
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -67,7 +71,7 @@ public class StudentUserDetails implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return user.isEnabled();
 	}
 
 }

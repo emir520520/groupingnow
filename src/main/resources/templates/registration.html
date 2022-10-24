@@ -21,7 +21,7 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#" th:href="@{/}">Grouping Application</a>
+				<a class="navbar-brand" href="#" th:href="@{/static}">Grouping Application</a>
 			</div>
 		</div>
 	</nav>
@@ -41,7 +41,7 @@
 
 				<h1>Registration</h1>
 
-				<form th:action="@{/registration}" method="post" th:object="${user}">
+				<form action="#" th:action="@{/process_register}" method="post" th:object="${user}" enctype="multipart/form-data">
 					<div class="form-group">
 						<label class="control-label" for="firstName"> First Name </label>
 						<input id="firstName" class="form-control" th:field="*{firstName}"
@@ -68,7 +68,7 @@
 
 					<div class="form-group">
 						<button type="submit" class="btn btn-success">Register</button>
-						<span>Already registered? <a href="/" th:href="@{/login}">Login
+						<span>Already registered? <a href="/static" th:href="@{/login}">Login
 								here</a></span>
 					</div>
 				</form>
