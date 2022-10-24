@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ca.sheridancollege.fangyux.Addition.StudentUserDetails;
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.Utils.ResultEntity;
 import ca.sheridancollege.fangyux.repository.*;
@@ -52,10 +53,16 @@ public class HomeController {
 
 		//-------------------------------------------Authentication
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userRepo.findByEmail(auth.getName());
 
+		System.out.println("User : " + auth.getName());
+		User user = userRepo.findByEmail(auth.getName());
+		//System.out.println("User email controller: " + user.getEmail());
+		System.out.println("auth principal: " + auth.getPrincipal());
 		if(user!=null) {
 			model.addAttribute("user", user.getFirstName());
+		}
+		else {
+			System.out.println("Fail to load user");
 		}
 
 		return "home.html";

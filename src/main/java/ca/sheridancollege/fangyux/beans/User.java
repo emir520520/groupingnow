@@ -1,12 +1,14 @@
 package ca.sheridancollege.fangyux.beans;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+//import lombok.*;
+
+import java.io.Serializable;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,11 +30,12 @@ import javax.persistence.JoinColumn;
 
 //@ComponentScan
 @Entity
-@Data
-@Getter
-@Setter
+//@Data
+//@Getter
+//@Setter
+//@AllArgsConstructor
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class User {
+public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +57,11 @@ public class User {
 	private String campus;
 	
 	private String password;
-	
+
+
+	@Column(name = "verification_code", length = 64)
+	private String verificationCode;
+
 	private boolean enabled;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -64,7 +71,8 @@ public class User {
 			inverseJoinColumns = @JoinColumn(
 					name = "group_id", referencedColumnName = "id"))
 	private List<SchoolGroup> groups;
-	
+
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
 			name = "user_role",
@@ -72,7 +80,7 @@ public class User {
 					name = "user_id", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(
 					name = "role_id", referencedColumnName = "id"))
-	private Collection<Role> roles;
+	private Set<Role> roles = new HashSet<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_event",
@@ -96,14 +104,11 @@ public class User {
 	
 	@Transient
 	String base64Encoded;
-	
 
-	public User()
-	{
-		
+	public User() {
 	}
-	
-	public User(String firstName, String lastName, String email, String password, Collection<Role> roles) {
+
+	public User(String firstName, String lastName, String email, String password, Set<Role> roles) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -135,18 +140,30 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public String getCampus() {
+		return campus;
+	}
+
+	public void setCampus(String campus) {
+		this.campus = campus;
+	}
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Collection<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
-	public void setRoles(Collection<Role> roles) {
+
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	public void addRole(Role role){
+		this.roles.add(role);
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -181,5 +198,12 @@ public class User {
 	
 	public String getBase64Encoded() {
 		return base64Encoded;
+	}
+	public String getVerificationCode() {
+		return verificationCode;
+	}
+
+	public void setVerificationCode(String verificationCode) {
+		this.verificationCode = verificationCode;
 	}
 }

@@ -6,12 +6,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import ca.sheridancollege.fangyux.beans.User;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface UserRepository extends JpaRepository<User, Long>{
 
-	@Query(value="SELECT * FROM user WHERE email LIKE %:email%",nativeQuery=true)
+	/*@Query(value="SELECT * FROM user WHERE email LIKE %:email%",nativeQuery=true)
+	User findByEmail(@Param("email")String email);*/
+	@Query(value="SELECT * FROM user WHERE email=:email",nativeQuery=true)
 	User findByEmail(@Param("email")String email);
+	@Query("SELECT u FROM User u WHERE u.verificationCode = ?1")
+	public User findByVerificationCode(String code);
 
 	@Query(value="SELECT password FROM user WHERE id=:id",nativeQuery=true)
 	User getEncryptedPasswordById(@Param("id")Long id);
