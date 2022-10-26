@@ -19,6 +19,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	@Query(value="SELECT event_id FROM cart_events c WHERE c.user_id= ?1",nativeQuery=true)
 	long getEventId(long userId);
 
+	@Query(value="SELECT * FROM event WHERE id=?1", nativeQuery = true)
+	Event getEventById(Long id);
+
 	@Query(value="SELECT * FROM event WHERE host_name like %:name% ORDER BY :#{#pageable}",
 			countQuery = "SELECT count(*) FROM event WHERE host_name like %:name%",
 			nativeQuery=true)
@@ -42,4 +45,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	//---------------------------------Operation of cart_events table
 	@Query(value="SELECT event_id FROM cart_events WHERE user_id=:userId",nativeQuery=true)
 	List<Long> getEventsIDsByUserId(@Param("userId")Long userId);
+
+	//---------------------------------Get the events will happen tomorrow
+	@Query(value = "SELECT id FROM event WHERE date > CURDATE() AND date < (CURDATE()+ INTERVAL 2 DAY)", nativeQuery = true)
+	List<Long> getEventsApproching();
 }

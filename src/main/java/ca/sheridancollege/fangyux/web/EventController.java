@@ -224,12 +224,12 @@ public class EventController {
 		msg.setContent(content, "text/html");
 		msg.setSentDate(new Date());
 
-		MimeBodyPart messageBodyPart = new MimeBodyPart();
-		messageBodyPart.setContent(content, "text/html");
-
-		Multipart multipart = new MimeMultipart();
-		multipart.addBodyPart(messageBodyPart);
-		MimeBodyPart attachPart = new MimeBodyPart();
+//		MimeBodyPart messageBodyPart = new MimeBodyPart();
+//		messageBodyPart.setContent(content, "text/html");
+//
+//		Multipart multipart = new MimeMultipart();
+//		multipart.addBodyPart(messageBodyPart);
+//		MimeBodyPart attachPart = new MimeBodyPart();
 
 		Transport.send(msg);
 	}
