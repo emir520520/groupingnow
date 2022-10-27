@@ -6,11 +6,14 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ca.sheridancollege.fangyux.beans.Event;
+
+import javax.transaction.Transactional;
 
 
 @Repository
@@ -46,7 +49,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	@Query(value="SELECT event_id FROM cart_events WHERE user_id=:userId",nativeQuery=true)
 	List<Long> getEventsIDsByUserId(@Param("userId")Long userId);
 
-	//---------------------------------Get the events will happen tomorrow
-	@Query(value = "SELECT id FROM event WHERE date > CURDATE() AND date < (CURDATE()+ INTERVAL 2 DAY)", nativeQuery = true)
+	//---------------------------------Get the events will happen in the next two hours
+	@Query(value = "SELECT id FROM event WHERE date = CURRENT_DATE() AND time > NOW() AND time < NOW()+INTERVAL 2 HOUR;", nativeQuery = true)
 	List<Long> getEventsApproching();
+
+	//---------------------------------Set the event remindered property to true
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE event SET remindered='true' WHERE id=?1", nativeQuery = true)
+	void setEventReminderedToTrue(Long id);
 }

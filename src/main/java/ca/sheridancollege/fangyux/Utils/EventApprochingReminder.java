@@ -42,13 +42,18 @@ public class EventApprochingReminder {
 
         //For every event, get all users that registered in the event
         for(int i=0; i<eventIDs.size();i++){
-            //Get user IDs of the event
-            List<Long> userIDs=cartEventRepo.getUsersByEventID(eventIDs.get(i));
             Event event=eventRepo.getEventById(eventIDs.get(i));
 
-            for(int k=0;k<userIDs.size();k++){
-                //Send the reminder email
-                sendReminderEmail(userIDs.get(k), event);
+            if(event.getRemindered().compareTo("true")!=0){
+                //Get user IDs of the event
+                List<Long> userIDs=cartEventRepo.getUsersByEventID(eventIDs.get(i));
+
+                for(int k=0;k<userIDs.size();k++){
+                    //Send the reminder email
+                    sendReminderEmail(userIDs.get(k), event);
+                }
+
+                eventRepo.setEventReminderedToTrue(eventIDs.get(i));
             }
         }
     }
@@ -63,7 +68,7 @@ public class EventApprochingReminder {
         String senderName = "Grouping Now Team";
         String subject = "Your event is approaching";
         String content = "Dear [[name]],<br>"
-                + "The event you registered before: [[event_name]] will be held tomorrow.  Please get ready for it!<br><br><br>"
+                + "The event you registered before: [[event_name]] will be held in two hours.  Please get ready for it!<br><br><br>"
                 + "Thank you,<br>"
                 + "Grouping Now team.";
 

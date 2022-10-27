@@ -104,7 +104,6 @@ public class EventController {
 
 	@PostMapping("/addEvent/{groupId}")
 	public String addEvent(@PathVariable (value = "groupId") String groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication){
-//		String id = String.valueOf(UUID.randomUUID());
 		Blob blob = null;
 		byte[] blobAsBytes=null;
 		try {
@@ -118,10 +117,9 @@ public class EventController {
 
 		event.setEventImage(blobAsBytes);
 
-		System.out.println(event.getEventImage());
-
 		Long groupIdLong=Long.parseLong(groupId);
 		event.setGroupId(groupIdLong);
+		event.setRemindered("false");
 		eventRepo.save(event);
 
 		return "viewGroups.html";
