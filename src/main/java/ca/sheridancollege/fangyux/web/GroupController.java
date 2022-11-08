@@ -12,7 +12,11 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.Utils.ResultEntity;
-import ca.sheridancollege.fangyux.beans.*;
+import ca.sheridancollege.fangyux.beans.CartGroup;
+import ca.sheridancollege.fangyux.beans.Event;
+import ca.sheridancollege.fangyux.beans.SchoolGroup;
+import ca.sheridancollege.fangyux.beans.User;
+import ca.sheridancollege.fangyux.repository.CartGroupRepository;
 import ca.sheridancollege.fangyux.repository.EventRepository;
 import ca.sheridancollege.fangyux.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +33,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
 import ca.sheridancollege.fangyux.repository.GroupRepository;
 import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -44,9 +47,14 @@ public class GroupController {
 	private UserService userService;
 	@Autowired
 	private GroupService groupService;
+
 	private GroupRepository groupRepo;
+
+	private CartGroupRepository cartgroupRepo;
+
 	private UserRepository userRepo;
 
+	//private User user;
 	@Autowired
 	private EventService eventService;
 
@@ -65,10 +73,22 @@ public class GroupController {
 			IOException {
 		//Get Group Info
 		SchoolGroup group = groupService.getGroupById(id);
+
+		List<User> users = new ArrayList<>();
 		group= ImageOperation.attatchBase64ToGroup(group);
+
+		for(int i = 0; i < cartgroupRepo.selectAllUserIdByGroupId(id).size();i++)
+		{
+			User user = new User();
+			user = userRepo.getUserByUserId(cartgroupRepo.selectAllUserIdByGroupId(id).get(i));
+			user=ImageOperation.attatchBase64ToUser(user);
+			users.add(user);
+			System.out.println(user.getEmail());
+		}
 
 		//set group as a model
 		model.addAttribute("groups",group);
+		model.addAttribute("users",users);
 		return "trackMyGroups.html";
 	}
 

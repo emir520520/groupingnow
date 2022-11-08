@@ -79,6 +79,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 								</div>
 							</div>
 							<hr>
+							<!--
 							<div class="row">
 								<div class="col-sm-3">
 									<p class="mb-0">Interested Topics</p>
@@ -87,6 +88,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 									<p class="text-muted mb-0"><span th:each="topic: ${originalUser.topics}"  th:text="${originalUser.campus}">Topics</span></p>
 								</div>
 							</div>
+							-->
 						</div>
 					</div>
 
@@ -94,11 +96,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 			</div>
 		</div>
 	</section>
-	<div class="container">
-		<a th:href="@{/sendemail/}" class="btn btn-info col-4">Send Email</a>
-	</div>
-
-
+	<!--
 	<div class="list-group m-5">
 		<div>
 			<h2>Your Event List</h2>
@@ -120,5 +118,6 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 		</div>
 
 	</div>
+	-->
 </body>
 </html>
