@@ -52,7 +52,6 @@ public class UserRegistrationController {
 	public String processRegister(Model model, User user, HttpServletRequest request)
 			throws IOException, MessagingException {
 		userService.register(user, getSiteURL(request));
-		userService.sendVerificationEmail(user,getSiteURL(request));
 		model.addAttribute("pageTitle","Registration Succeeded!");
 		return "register/register_success";
 	}

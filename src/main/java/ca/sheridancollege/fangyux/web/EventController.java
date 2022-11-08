@@ -148,6 +148,7 @@ public class EventController {
 	@PostMapping("/addEvent/{groupId}")
 	public String addEvent(@PathVariable (value = "groupId") String groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication) throws MessagingException, IOException {
 //		String id = String.valueOf(UUID.randomUUID());
+
 		Blob blob = null;
 		byte[] blobAsBytes=null;
 		try {
@@ -161,10 +162,9 @@ public class EventController {
 
 		event.setEventImage(blobAsBytes);
 
-		System.out.println(event.getEventImage());
-
 		Long groupIdLong=Long.parseLong(groupId);
 		event.setGroupId(groupIdLong);
+		event.setRemindered("false");
 		eventRepo.save(event);
 
 		String content;
@@ -289,12 +289,12 @@ public class EventController {
 		msg.setContent(content, "text/html");
 		msg.setSentDate(new Date());
 
-		MimeBodyPart messageBodyPart = new MimeBodyPart();
-		messageBodyPart.setContent(content, "text/html");
-
-		Multipart multipart = new MimeMultipart();
-		multipart.addBodyPart(messageBodyPart);
-		MimeBodyPart attachPart = new MimeBodyPart();
+//		MimeBodyPart messageBodyPart = new MimeBodyPart();
+//		messageBodyPart.setContent(content, "text/html");
+//
+//		Multipart multipart = new MimeMultipart();
+//		multipart.addBodyPart(messageBodyPart);
+//		MimeBodyPart attachPart = new MimeBodyPart();
 
 		Transport.send(msg);
 	}
