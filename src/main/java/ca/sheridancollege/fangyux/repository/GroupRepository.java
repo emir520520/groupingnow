@@ -38,6 +38,9 @@ public interface GroupRepository extends JpaRepository<SchoolGroup, Long> {
 	@Query(value="SELECT group_id FROM cart_groups c WHERE c.user_id= ?1",nativeQuery=true)
 	long getGroupId(long userId);
 
+	@Query(value="SELECT user_id FROM school_group c WHERE c.id= ?1",nativeQuery=true)
+	long getUserIdByGroupId(long groupId);
+
 	@Query(value="SELECT name FROM school_group c WHERE c.id= ?1",nativeQuery=true)
 	String getGroupNameByGroupId(long groupId);
 

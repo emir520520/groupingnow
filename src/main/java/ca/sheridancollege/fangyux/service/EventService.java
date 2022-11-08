@@ -28,4 +28,6 @@ public interface EventService {
 	Page<Event> getEventsByIDs(int PageNum, int pageSize, List<Long> eventIDs);
 
 	Page<Event> getEventsByName(int PageNum, int pageSize, String name);
+
+	long getEventIdByUserIdAndGroupId(long userId);
 }

@@ -78,7 +78,7 @@
 
       <div class="col-sm-4">
         <div class="row" th:each="g : ${groups}">
-          <h2>Event Tracking</h2>
+          <h2>My Event Tracking</h2>
           <a th:href = "@{/addEvent/{id}(id=${g.id})}" class="btn btn-primary btn-sm mb-1 mt-1" style="margin-left: 60px">Add New Event</a><hr>
         </div>
 
@@ -99,8 +99,23 @@
       </div>
 
       <div class="col-sm-4">
-        <h2> Participant</h2>
-        <div class="card list-group-item" style="width:500px" th:each="g : ${users}">
+        <h2 th:text="'Host '"></h2>
+        <div class="card list-group-item" style="width:500px" th:each="h : ${hosts}">
+          <div class="row">
+            <div class="col-sm-3">
+              <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${h.getBase64Encoded()}"/>
+            </div>
+            <div class="col-sm-9">
+              <div class="card-body">
+                <h5 class="card-title" th:text="${h.firstName} + ' ' + ${h.lastName}"></h5>
+                <p class="card-text" th:text="${h.email}"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <h2 th:text="'Participants: ' + ${#lists.size(users)}"></h2>
+        <div class="card list-group-item" style="width:500px" th:each="g, state : ${users}">
           <div class="row">
             <div class="col-sm-3">
               <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
