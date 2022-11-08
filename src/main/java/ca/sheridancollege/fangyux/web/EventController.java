@@ -219,13 +219,16 @@ public class EventController {
 	public ResultEntity<List<Event>> getEventPaginated(
 			@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "3")Integer pageSize,
-			@RequestParam("userId")String Id
+			@RequestParam("userId")String uId//,
+			//@RequestParam("groupId")String gId
 	) throws IOException {
 		//Get userId
-		Long userId=Long.parseLong(Id);
+		Long userId=Long.parseLong(uId);
+		//Long groupId=Long.parseLong(gId);
 
 		//Get Events IDs by userId from cart_events table
-		List<Long> eventIDs=eventRepo.getEventsIDsByUserId(userId);
+		//List<Long> eventIDs=eventRepo.getEventsIDsByUserId(userId);
+		List<Long> eventIDs=eventRepo.getEventIdByUserIdAndGroupId(userId);
 
 		Page<Event> eventPage = eventService.getEventsByIDs(pageNum, pageSize, eventIDs);
 

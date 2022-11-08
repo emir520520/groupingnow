@@ -62,15 +62,36 @@ public class GroupController {
 	@GetMapping("/goTrackGroups/{id}")
 	public String goTrackGroup(@PathVariable (value = "id") Long id, Model model) throws
 			IOException {
+		Long hostId = groupRepo.getUserIdByGroupId(id);
+		User host = userService.getUserById(hostId);
+		host = ImageOperation.attatchBase64ToUser(host);
+
 		SchoolGroup group = groupService.getGroupById(id);
+
+		List<User> users = new ArrayList<>();
 		group= ImageOperation.attatchBase64ToGroup(group);
+
+		for(int i = 0; i < cartgroupRepo.selectAllUserIdByGroupId(id).size();i++)
+		{
+			User user = new User();
+			user = userRepo.getUserByUserId(cartgroupRepo.selectAllUserIdByGroupId(id).get(i));
+			user=ImageOperation.attatchBase64ToUser(user);
+			users.add(user);
+		}
+
 		//set group as a model
 		model.addAttribute("groups",group);
+		model.addAttribute("users",users);
+		model.addAttribute("hosts",host);
 		return "trackGroups.html";
 	}
 	@GetMapping("/goTrackMyGroups/{id}")
-	public String goTrackMyGroup(@PathVariable (value = "id") Long id, Model model) throws
+	public String goTrackMyGroup(@PathVariable (value = "id") Long id, Model model, @AuthenticationPrincipal Authentication authentication) throws
 			IOException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User host = userRepo.findByEmail(auth.getName());
+		host = ImageOperation.attatchBase64ToUser(host);
+
 		//Get Group Info
 		SchoolGroup group = groupService.getGroupById(id);
 
@@ -83,12 +104,13 @@ public class GroupController {
 			user = userRepo.getUserByUserId(cartgroupRepo.selectAllUserIdByGroupId(id).get(i));
 			user=ImageOperation.attatchBase64ToUser(user);
 			users.add(user);
-			System.out.println(user.getEmail());
 		}
 
 		//set group as a model
 		model.addAttribute("groups",group);
 		model.addAttribute("users",users);
+		model.addAttribute("hosts",host);
+
 		return "trackMyGroups.html";
 	}
 
@@ -229,7 +251,15 @@ public class GroupController {
 		groupRepo.deleteById(id);
 		return "redirect:/viewGroups";
 	}
-	
+	@GetMapping("/leaveGroup/{groupId}")
+	public String leaveGroup(@PathVariable (value = "groupId") long groupId, Model model,
+							 @AuthenticationPrincipal Authentication authentication) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		cartgroupRepo.deleteByUserAndGroup(user.getId(),groupId);
+		return "redirect:/viewGroups";
+	}
 	@GetMapping("/viewUsers")
 	public String viewUsers(Model model) {
 		model.addAttribute("users", userRepo.findAll());

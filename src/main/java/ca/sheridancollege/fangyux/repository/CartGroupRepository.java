@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -20,8 +21,9 @@ public interface CartGroupRepository extends JpaRepository<CartGroup, Long> {
     public void updateQuantity(Integer participants, Integer userId, Integer groupId);
 
     @Modifying
-    @Query("DELETE FROM CartGroup c WHERE c.user.id = ?1 AND c.group.id = ?2")
-    public void deleteByUserAndGroup(User user, SchoolGroup group);
+    @Transactional
+    @Query(value ="DELETE FROM cart_groups WHERE user_id = ?1 AND group_id = ?2",nativeQuery = true)
+    public void deleteByUserAndGroup(Long user, Long group);
 
     @Query(value ="SELECT COUNT(*) FROM cart_groups WHERE group_id=?1 AND user_id=?2", nativeQuery = true)
     public int checkCartGroupOfUser(Long groupId, Long userId);
