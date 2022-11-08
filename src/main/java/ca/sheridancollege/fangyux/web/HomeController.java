@@ -90,8 +90,8 @@ public class HomeController {
 		return ResultEntity.successWithtDataAndTotalRecoreds(events, totalRecords);
 	}
   
-	@GetMapping("/findDetailsEvent/{id}")
-	public String goFindDetailEvent(@PathVariable (value = "id") Long id, Model model) throws
+	@GetMapping("/findDetailsEvent/{groupId}/{eventId}")
+	public String goFindDetailEvent(@PathVariable ("groupId") Long groupId,@PathVariable (value = "eventId") Long eventId, Model model) throws
 			IOException {
 		//-------------------------------------------Authentication for verify to prevent user clicks pick btn
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -101,7 +101,7 @@ public class HomeController {
 			model.addAttribute("user", user.getFirstName());
 
 			//--------------------------------------------If the current event is picked already, display some msg in the front-end
-			int result=cartEventRepo.checkCartEventOfUser(id, user.getId());
+			int result=cartEventRepo.checkCartEventOfUser(eventId, user.getId());
 
 			if(result==1){
 				model.addAttribute("cart","picked");
@@ -110,11 +110,15 @@ public class HomeController {
 			}
 		}
 
-		Event event = eventService.getEventById(id);
+		Event event = eventService.getEventById(eventId);
+		SchoolGroup group = groupService.getGroupById(groupId);
+
+		System.out.println(group.getId());
 
 		event= ImageOperation.attatchBase64ToEvent(event);
 		//set event as a model
 		model.addAttribute("events",event);
+		model.addAttribute("groups",group);
 			return "findDetailsEvent.html";
 
 	}

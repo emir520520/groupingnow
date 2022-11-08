@@ -68,9 +68,13 @@
         <p class="card-text" th:text="'Time: '+${e.time}"></p>
         <p class="card-text" th:text="'Number of Spot: '+${e.numOfSpot}"></p>
         <p class="card-text" th:text="'Number of attendence: '+${e.numOfAttentdance}"></p>
-        <a th:href="@{/addEventToCart/{id}(id=${e.id})}" class="btn btn-info col-4" id="aPick">Pick Event</a>
+        <p class="card-text" th:text="'GroupId: '+${e.groupId}"></p>
+        <p><a th:href="@{/addGroupEventToCart/{groupId}/{eventId}(groupId=${e.groupId},eventId=${e.id})}" class="btn btn-info col-4" id="aPick">Pick Event</a></p>
     </div>
 </div>
+
+
+
 
 <!--**************************************Footer*************************************-->
 <footer class="page-footer font-small bg-dark mb-0">

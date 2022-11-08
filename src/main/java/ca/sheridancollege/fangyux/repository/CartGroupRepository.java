@@ -25,4 +25,7 @@ public interface CartGroupRepository extends JpaRepository<CartGroup, Long> {
 
     @Query(value ="SELECT COUNT(*) FROM cart_groups WHERE group_id=?1 AND user_id=?2", nativeQuery = true)
     public int checkCartGroupOfUser(Long groupId, Long userId);
+
+    @Query(value ="SELECT user_id FROM cart_groups WHERE group_id=?1", nativeQuery = true)
+    public List<Long> selectAllUserIdByGroupId(Long groupId);
 }

@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import ca.sheridancollege.fangyux.beans.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
 
@@ -17,6 +19,12 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	User findByEmail(@Param("email")String email);
 	@Query("SELECT u FROM User u WHERE u.verificationCode = ?1")
 	public User findByVerificationCode(String code);
+
+	@Query(value="SELECT email FROM User u WHERE u.enabled = 1 and u.id = ?1",nativeQuery=true)
+	public String getUserEmailByUserId(Long id);
+
+	@Query(value="SELECT * FROM User u WHERE u.enabled = 1 and u.id = ?1",nativeQuery=true)
+	public User getUserByUserId(Long id);
 
 	@Query(value="SELECT password FROM user WHERE id=:id",nativeQuery=true)
 	User getEncryptedPasswordById(@Param("id")Long id);

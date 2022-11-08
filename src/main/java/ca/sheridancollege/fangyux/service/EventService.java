@@ -4,9 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.util.List;
 
+import ca.sheridancollege.fangyux.beans.Event;
 import org.springframework.data.domain.Page;
 
-import ca.sheridancollege.fangyux.beans.Event;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
