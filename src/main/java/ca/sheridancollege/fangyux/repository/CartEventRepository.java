@@ -19,12 +19,16 @@ public interface CartEventRepository extends JpaRepository<CartEvent, Long> {
 
     @Modifying
     @Query("Update CartEvent c SET c.quantity = ?1 WHERE c.user.id = ?2 AND c.event.id = ?3")
-    public void updateQuantity(Integer quantity, Integer userId, Integer eventId);
+    void updateQuantity(Integer quantity, Integer userId, Integer eventId);
 
     @Modifying
     @Query("DELETE FROM CartEvent c WHERE c.user.id = ?1 AND c.event.id = ?2")
-    public void deleteByUserAndEvent(User user, Event event);
+    void deleteByUserAndEvent(User user, Event event);
 
     @Query(value ="SELECT COUNT(*) FROM cart_events WHERE event_id=?1 AND user_id=?2", nativeQuery = true)
-    public int checkCartEventOfUser(Long eventId, Long userId);
+    int checkCartEventOfUser(Long eventId, Long userId);
+
+    //---------------------------------Get the users that registered in the event
+    @Query(value="SELECT user_id FROM cart_events WHERE event_id=?1", nativeQuery = true)
+    List<Long> getUsersByEventID(Long eventID);
 }

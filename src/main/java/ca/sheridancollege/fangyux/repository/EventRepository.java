@@ -6,11 +6,14 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ca.sheridancollege.fangyux.beans.Event;
+
+import javax.transaction.Transactional;
 
 
 @Repository
@@ -18,6 +21,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
 	@Query(value="SELECT event_id FROM cart_events c WHERE c.user_id= ?1",nativeQuery=true)
 	long getEventId(long userId);
+
+	@Query(value="SELECT * FROM event WHERE id=?1", nativeQuery = true)
+	Event getEventById(Long id);
 
 	@Query(value="SELECT * FROM event WHERE host_name like %:name% ORDER BY :#{#pageable}",
 			countQuery = "SELECT count(*) FROM event WHERE host_name like %:name%",
@@ -42,4 +48,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	//---------------------------------Operation of cart_events table
 	@Query(value="SELECT event_id FROM cart_events WHERE user_id=:userId",nativeQuery=true)
 	List<Long> getEventsIDsByUserId(@Param("userId")Long userId);
+
+	//---------------------------------Get the events will happen in the next two hours
+	@Query(value = "SELECT id FROM event WHERE date = CURRENT_DATE() AND time > NOW() AND time < NOW()+INTERVAL 2 HOUR;", nativeQuery = true)
+	List<Long> getEventsApproching();
+
+	//---------------------------------Set the event remindered property to true
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE event SET remindered='true' WHERE id=?1", nativeQuery = true)
+	void setEventReminderedToTrue(Long id);
 }

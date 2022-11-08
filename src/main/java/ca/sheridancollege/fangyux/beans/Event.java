@@ -63,6 +63,9 @@ public class Event {
 	
 	@Column(name = "num_of_attendance")
 	private int numOfAttentdance;
+
+	@Column(name="remindered")
+	private String remindered;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy="events")
 	private List<User> attendees;
@@ -192,5 +195,13 @@ public class Event {
 	
 	public List<User> getAttendees(){
 		return attendees;
+	}
+
+	public String getRemindered(){
+		return this.remindered;
+	}
+
+	public void setRemindered(String s){
+		this.remindered=s;
 	}
 }
