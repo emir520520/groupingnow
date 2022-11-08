@@ -17,7 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Component
-public class EventApprochingReminder {
+public class EventRegularChecker {
 
     @Autowired
     private EventRepository eventRepo;
@@ -31,8 +31,17 @@ public class EventApprochingReminder {
     @Autowired
     private JavaMailSender mailSender;
 
-//    @Scheduled(cron = "0 */1 * ? * *")
-//@Scheduled(cron = "0 0 7 1/1 * ? *")
+    @Scheduled(cron = "0 */1 * ? * *")
+    public void deleteEventsPassed(){
+        //Get passed events ID
+        List<Integer> passedEventsIDs=eventRepo.getPassedEventsID();
+
+        //Delete those events related records in cart_events table first
+        cartEventRepo.deletePassedEventsRecords(passedEventsIDs);
+
+        //Delete passed events
+        eventRepo.deletePassedEvents();
+    }
 
     //7:00am every day
     @Scheduled(cron = "0 */1 * ? * *")
@@ -68,7 +77,7 @@ public class EventApprochingReminder {
         String senderName = "Grouping Now Team";
         String subject = "Your event is approaching";
         String content = "Dear [[name]],<br>"
-                + "The event you registered before: [[event_name]] will be held in two hours.  Please get ready for it!<br><br><br>"
+            + "The event you registered before: [[event_name]] will be held in two hours.  Please get ready for it!<br><br><br>"
                 + "Thank you,<br>"
                 + "Grouping Now team.";
 

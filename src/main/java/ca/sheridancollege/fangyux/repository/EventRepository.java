@@ -58,4 +58,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	@Transactional
 	@Query(value = "UPDATE event SET remindered='true' WHERE id=?1", nativeQuery = true)
 	void setEventReminderedToTrue(Long id);
+
+	//---------------------------------Get passed events IDs
+	@Query(value="SELECT id FROM `event`WHERE date < CURRENT_DATE() OR (date=CURRENT_DATE AND time < NOW());", nativeQuery = true)
+	List<Integer> getPassedEventsID();
+
+	//----------------------------------Delete passed events
+	@Modifying
+	@Transactional
+	@Query(value="DELETE FROM `event`WHERE date < CURRENT_DATE() OR (date=CURRENT_DATE AND time < NOW());", nativeQuery = true)
+	void deletePassedEvents();
 }

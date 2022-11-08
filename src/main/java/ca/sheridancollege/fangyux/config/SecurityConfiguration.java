@@ -70,6 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		http.cors().and().csrf().disable()
 				.authorizeRequests()
+				.antMatchers( "/favicon.ico").permitAll()
 		.antMatchers(HttpMethod.GET, "/").permitAll()
 		.antMatchers(HttpMethod.GET, "/registration**").permitAll()
 		.antMatchers(HttpMethod.GET, "//user/**").hasRole("USER")
@@ -78,6 +79,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.antMatchers(HttpMethod.GET, "/addEvent").hasRole("USER")
 		//.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addEvent").hasRole("USER")
+
 		//.anyRequest().authenticated()
 		.and()
 		.formLogin()

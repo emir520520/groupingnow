@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -31,4 +32,10 @@ public interface CartEventRepository extends JpaRepository<CartEvent, Long> {
     //---------------------------------Get the users that registered in the event
     @Query(value="SELECT user_id FROM cart_events WHERE event_id=?1", nativeQuery = true)
     List<Long> getUsersByEventID(Long eventID);
+
+    //----------------------------------Delete records including passed events
+    @Modifying
+    @Transactional
+    @Query(value="DELETE FROM cart_events WHERE event_id IN (?1);", nativeQuery = true)
+    void deletePassedEventsRecords(List<Integer> IDs);
 }
