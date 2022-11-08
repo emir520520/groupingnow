@@ -58,4 +58,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	@Transactional
 	@Query(value = "UPDATE event SET remindered='true' WHERE id=?1", nativeQuery = true)
 	void setEventReminderedToTrue(Long id);
+
+	@Query(value="SELECT event_id FROM cart_groups_events c WHERE c.user_id= ?1",nativeQuery=true)
+	List<Long> getEventIdByUserIdAndGroupId(Long userId);
+
+	//List<Long> getEventsIDsByUserIdAndGroupId(Long userId);
 }

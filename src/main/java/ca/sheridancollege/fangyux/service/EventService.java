@@ -1,14 +1,11 @@
 package ca.sheridancollege.fangyux.service;
 
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
 import java.util.List;
 
 import ca.sheridancollege.fangyux.beans.Event;
 import org.springframework.data.domain.Page;
 
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,5 +26,5 @@ public interface EventService {
 
 	Page<Event> getEventsByName(int PageNum, int pageSize, String name);
 
-	long getEventIdByUserIdAndGroupId(long userId);
+	List<Long> getEventIdByUserIdAndGroupId(long userId);
 }

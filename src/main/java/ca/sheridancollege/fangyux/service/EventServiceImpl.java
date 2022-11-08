@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService{
 	}
 
 	@Override
-	public long getEventIdByUserIdAndGroupId(long userId) {
+	public List<Long> getEventIdByUserIdAndGroupId(long userId) {
 		return this.eventRepository.getEventIdByUserIdAndGroupId(userId);
 	}
 }

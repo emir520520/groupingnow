@@ -228,7 +228,7 @@ public class EventController {
 
 		//Get Events IDs by userId from cart_events table
 		//List<Long> eventIDs=eventRepo.getEventsIDsByUserId(userId);
-		List<Long> eventIDs=eventRepo.getEventsIDsByUserIdAndGroupId(userId);
+		List<Long> eventIDs=eventRepo.getEventIdByUserIdAndGroupId(userId);
 
 		Page<Event> eventPage = eventService.getEventsByIDs(pageNum, pageSize, eventIDs);
 
