@@ -60,7 +60,7 @@
   <!--**************************************Body Div*************************************-->
   <div class="container-fluid">
     <div class="row mt-2 ml-2 mr-2 mb-2">
-      <div class="col-5">
+      <div class="col-sm-4">
         <h2>My Group Tracking</h2>
         <div class="card list-group-item" style="width:500px" th:each="g : ${groups}">
           <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
@@ -76,9 +76,9 @@
         </div>
       </div>
 
-      <div class="col-7">
+      <div class="col-sm-4">
         <div class="row" th:each="g : ${groups}">
-          <h2>Event Tracking</h2>
+          <h2>My Event Tracking</h2>
           <a th:href = "@{/addEvent/{id}(id=${g.id})}" class="btn btn-primary btn-sm mb-1 mt-1" style="margin-left: 60px">Add New Event</a><hr>
         </div>
 
@@ -95,6 +95,38 @@
   align-items: center;
   text-align: center;
     margin-top: 60px; margin-bottom: 80px;"></div>
+        </div>
+      </div>
+
+      <div class="col-sm-4">
+        <h2 th:text="'Host '"></h2>
+        <div class="card list-group-item" style="width:500px" th:each="h : ${hosts}">
+          <div class="row">
+            <div class="col-sm-3">
+              <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${h.getBase64Encoded()}"/>
+            </div>
+            <div class="col-sm-9">
+              <div class="card-body">
+                <h5 class="card-title" th:text="${h.firstName} + ' ' + ${h.lastName}"></h5>
+                <p class="card-text" th:text="${h.email}"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <h2 th:text="'Participants: ' + ${#lists.size(users)}"></h2>
+        <div class="card list-group-item" style="width:500px" th:each="g, state : ${users}">
+          <div class="row">
+            <div class="col-sm-3">
+              <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+            </div>
+            <div class="col-sm-9">
+              <div class="card-body">
+                <h5 class="card-title" th:text="${g.firstName} + ' ' + ${g.lastName}"></h5>
+                <p class="card-text" th:text="${g.email}"></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -170,7 +202,7 @@
         //Card Body
         var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
         var discriptionP="<p class='card-text'>"+description+"</p>";
-        var findDetailsA="<a href='/findDetailsEvent/"+id+"' class='btn btn-primary'>Find Details</a>"
+        var findDetailsA="<a href='/findDetailsEvent/" + [[${groups.id}]] +"/" +id+"' class='btn btn-primary'>Find Details</a>"
         var cardBody="<div class=\"card-body\" style=''>"+eventNameH5+discriptionP+findDetailsA+"</div>";
 
         //Card
