@@ -122,6 +122,9 @@ public class EventController {
 
 			User user = userRepo.findByEmail(auth.getName());
 			Integer updatedQuantity = cartEventServices.addEvent(eventId, user);
+
+			eventRepo.increaseNumOfAttendance(eventId);
+
 			return "redirect:/events";
 		} catch(UsernameNotFoundException ex){
 			System.out.println("You must login to add this event to cart");

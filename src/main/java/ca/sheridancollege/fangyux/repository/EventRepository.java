@@ -73,4 +73,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	@Transactional
 	@Query(value="DELETE FROM `event`WHERE date < CURRENT_DATE() OR (date=CURRENT_DATE AND time < NOW());", nativeQuery = true)
 	void deletePassedEvents();
+
+	//----------------------------------Increase number_of_attendances
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE `event` SET num_of_attendance=num_of_attendance+1 WHERE id=?1", nativeQuery = true)
+	void increaseNumOfAttendance(Long eventID);
 }
