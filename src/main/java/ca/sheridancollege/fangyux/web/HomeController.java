@@ -111,14 +111,14 @@ public class HomeController {
 		}
 
 		Event event = eventService.getEventById(eventId);
-		SchoolGroup group = groupService.getGroupById(groupId);
+//		SchoolGroup group = groupService.getGroupById(groupId);
 
-		System.out.println(group.getId());
+//		System.out.println(group.getId());
 
 		event= ImageOperation.attatchBase64ToEvent(event);
 		//set event as a model
 		model.addAttribute("events",event);
-		model.addAttribute("groups",group);
+//		model.addAttribute("groups",group);
 			return "findDetailsEvent.html";
 
 	}
