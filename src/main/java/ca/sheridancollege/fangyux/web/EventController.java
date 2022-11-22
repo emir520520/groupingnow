@@ -10,17 +10,17 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
 import ca.sheridancollege.fangyux.Utils.ResultEntity;
+import ca.sheridancollege.fangyux.beans.Announcement;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.repository.CartGroupRepository;
-import ca.sheridancollege.fangyux.repository.EventRepository;
-import ca.sheridancollege.fangyux.repository.GroupRepository;
-import ca.sheridancollege.fangyux.service.CartEventGroupServices;
-import ca.sheridancollege.fangyux.service.CartEventServices;
-import ca.sheridancollege.fangyux.service.GroupService;
+import ca.sheridancollege.fangyux.repository.*;
+import ca.sheridancollege.fangyux.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.sheridancollege.fangyux.beans.Event;
-import ca.sheridancollege.fangyux.repository.UserRepository;
-import ca.sheridancollege.fangyux.service.EventService;
 
 
 @Controller
@@ -47,15 +45,23 @@ public class EventController {
 	private EventService eventService;
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private UserService userService;
 	private UserRepository userRepo;
 
 	@Autowired
 	private EventRepository eventRepo;
 	@Autowired
 	private GroupRepository groupRepo;
-
+	@Autowired
+	private AnnouncementRepository announcementRepository;
+	@Autowired
+	private JavaMailSender mailSender;
 	@Autowired
 	private CartGroupRepository cartGroupRepo;
+
+	@Autowired
+	private CartGroupEventRepository cartGroupEventRepo;
 	
 	@GetMapping("/events")
 	public String home(Model model) {
@@ -64,8 +70,16 @@ public class EventController {
 		User user = userRepo.findByEmail(auth.getName());
 
 		Long userId=user.getId();
+		List<Long> groupIdList=cartGroupEventRepo.getGroupIdsByUserId(userId);
+		List<SchoolGroup> groupList = new ArrayList<>();
+
+		for(int i=0;i<groupIdList.size();i++)
+		{
+			groupList.add(groupRepo.getById(groupIdList.get(i)));
+		}
 
 		model.addAttribute("user", user.getFirstName());
+		model.addAttribute("groups", groupList);
 
 
 		return findPaginated(userId,model);
@@ -123,6 +137,54 @@ public class EventController {
 			User user = userRepo.findByEmail(auth.getName());
 			Integer updatedQuantity = cartEventServices.addEvent(eventId, user);
 			return "redirect:/events";
+		} catch(UsernameNotFoundException ex){
+			System.out.println("You must login to add this event to cart");
+			return "You must login to add this event to cart";
+		}
+	}
+
+	@GetMapping("/inviteGroupMember/{eventId}/{userId}")
+	public String inviteGroupMember(@PathVariable("eventId") Long eventId, @PathVariable("userId") Long userId, @AuthenticationPrincipal Authentication authentication) throws AddressException, MessagingException, IOException{
+		try{
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			//get event information
+			Event event = eventService.getEventById(eventId);
+			SchoolGroup group = groupService.getGroupById(event.getGroupId());
+			String content;
+			content ="Dear [[name]],<br>"+
+					"<h3>You got invite to this event from group '" + group.getName() +"'</h3>"+
+							"<br>Event name: " + event.getEventName() +
+							"<br>Description: " + event.getDescription() +
+							"<br>Host name: " + event.getHostName() +
+							"<br>Type of Event: " + event.getTypeOfEvent() +
+							"<br>Category: " + event.getCategory() +
+							"<br>Location: " + event.getLocation() +
+							"<br>Date: " +event.getDate() +
+							"<br>Time: " + event.getTime()
+					+ "<br><br>Please click the link below to verify your registration:<br>"
+					+ "<h3><a href=\"[[URL]]\" target=\"_self\">Join</a></h3>"
+					+ "Thank you,<br>"
+					+ "Grouping Now team.";
+
+			//send email to user with event information
+			User user = userRepo.getUserByUserId(userId);
+			User receiver = userRepo.findByEmail(auth.getName());
+
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+
+			helper.setFrom(auth.getName(), receiver.getFirstName() + " " + receiver.getLastName());
+			helper.setTo(user.getEmail());
+			helper.setSubject("Get Invite f");
+			content = content.replace("[[name]]", user.getFirstName() + user.getLastName());
+
+			String xURL ="@{/addGroupEventToCart/"+event.getGroupId()+"/"+eventId;
+			content = content.replace("[[URL]]", xURL);
+
+			sendmail(user.getEmail(), content);
+
+
+			return "redirect:/goTrackMyEvents/" + event.getGroupId() + "/" + eventId;
 		} catch(UsernameNotFoundException ex){
 			System.out.println("You must login to add this event to cart");
 			return "You must login to add this event to cart";
@@ -188,7 +250,34 @@ public class EventController {
 
 		return "viewGroups.html";
 	}
-	
+
+	@GetMapping("/addAnnouncement/{groupId}/{eventId}")
+	public String loadAddAnnouncement(Model model, @PathVariable("groupId")Long groupId, @PathVariable("eventId")Long eventId) {
+		model.addAttribute("announcementpost", new Announcement());
+		model.addAttribute("users", userRepo.findAll());
+		model.addAttribute("groupId",groupId);
+		model.addAttribute("eventId",eventId);
+		return "redirect:/";
+	}
+
+	@PostMapping("/addAnnouncement/{groupId}/{eventId}")
+	public String addAnnouncement(@PathVariable("groupId")Long groupId, @PathVariable("eventId")Long eventId,@ModelAttribute("announcementpost") Announcement announcement, Model model, @AuthenticationPrincipal Authentication authentication) throws IOException{
+		Long hostId = groupRepo.getUserIdByGroupId(groupId);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		//get host name
+		User hostUser = userService.getUserById(hostId);
+		String hostName = hostUser.getFirstName() + " " + hostUser.getLastName();
+
+		announcement.setEventId(eventId);
+		announcement.setGroupId(groupId);
+		announcement.setUserId(hostId);
+		announcement.setHostName(hostName);
+		announcementRepository.save(announcement);
+		return "redirect:/goTrackMyEvents/" + groupId + "/" + eventId;
+	}
+
 	@GetMapping("/showFormForUpdate/{id}")
 	public String showFormForUpdate(@PathVariable (value = "id") long id, Model model) {
 		//get event from service
@@ -198,6 +287,137 @@ public class EventController {
 		model.addAttribute("event",event);
 		return "editEvent";
 	}
+	@GetMapping("/goTrackEvents/{groupId}/{eventId}")
+	public String goTrackEvent(@PathVariable (value = "groupId") Long groupId,@PathVariable (value = "eventId") Long eventId, Model model) throws
+			IOException {
+		Long hostId = groupRepo.getUserIdByGroupId(groupId);
+		User host = userService.getUserById(hostId);
+		host = ImageOperation.attatchBase64ToUser(host);
+
+		Event event = eventService.getEventById(eventId);
+		SchoolGroup group = groupService.getGroupById(groupId);
+
+		List<User> users = new ArrayList<>();
+		List<User> groupMember = new ArrayList<>();
+		List<User> groupMemberLeft = new ArrayList<>();
+		event= ImageOperation.attatchBase64ToEvent(event);
+		group= ImageOperation.attatchBase64ToGroup(group);
+
+		event.setNumOfAttentdance(cartGroupEventRepo.getAllUserIdByGroupIdAndEventId(groupId, eventId).size());
+
+		for(int i = 0; i < cartGroupEventRepo.getAllUserIdByGroupIdAndEventId(groupId, eventId).size();i++)
+		{
+			User user = new User();
+			user = userRepo.getUserByUserId(cartGroupEventRepo.getAllUserIdByGroupIdAndEventId(groupId, eventId).get(i));
+			user=ImageOperation.attatchBase64ToUser(user);
+			users.add(user);
+		}
+		for(int i = 0; i < cartGroupRepo.selectAllUserIdByGroupId(groupId).size();i++)
+		{
+			User user = new User();
+			user = userRepo.getUserByUserId(cartGroupRepo.selectAllUserIdByGroupId(groupId).get(i));
+			user=ImageOperation.attatchBase64ToUser(user);
+			groupMember.add(user);
+		}
+		for (int i = 0; i < groupMember.size(); i++)
+		{
+			int j;
+
+			for (j = 0; j < users.size(); j++)
+				if (groupMember.get(i).getId() == users.get(j).getId())
+					break;
+
+			if (j == users.size())
+			{
+				System.out.print(groupMember.get(i).getId() + " ");
+				groupMemberLeft.add(groupMember.get(i));
+			}
+		}
+		//test
+		System.out.println("userID: " + hostId);
+		System.out.println("groupId: " + groupId);
+		System.out.println("eventId: " + eventId);
+
+		//get announcement
+		List<Announcement> announcements = new ArrayList<>();
+		announcements = announcementRepository.getAnnouncementsByUserIdAndGroupIdAndEventId(hostId, groupId, eventId);
+
+		//set group as a model
+		model.addAttribute("groups",groupMemberLeft);
+		model.addAttribute("events",event);
+		model.addAttribute("users",users);
+		model.addAttribute("hosts",host);
+		model.addAttribute("announcements",announcements);
+		return "trackEvents.html";
+	}
+
+	@GetMapping("/goTrackMyEvents/{groupId}/{eventId}")
+	public String goTrackMyEvent(@PathVariable (value = "groupId") Long groupId,@PathVariable (value = "eventId") Long eventId, Model model) throws
+			IOException {
+		Long hostId = groupRepo.getUserIdByGroupId(groupId);
+		User host = userService.getUserById(hostId);
+		host = ImageOperation.attatchBase64ToUser(host);
+
+		Event event = eventService.getEventById(eventId);
+		SchoolGroup group = groupService.getGroupById(groupId);
+
+		List<User> users = new ArrayList<>();
+		List<User> groupMember = new ArrayList<>();
+		List<User> groupMemberLeft = new ArrayList<>();
+		event= ImageOperation.attatchBase64ToEvent(event);
+		group= ImageOperation.attatchBase64ToGroup(group);
+
+		event.setNumOfAttentdance(cartGroupEventRepo.getAllUserIdByGroupIdAndEventId(groupId, eventId).size());
+
+		for(int i = 0; i < cartGroupEventRepo.getAllUserIdByGroupIdAndEventId(groupId, eventId).size();i++)
+		{
+			User user = new User();
+			user = userRepo.getUserByUserId(cartGroupEventRepo.getAllUserIdByGroupIdAndEventId(groupId, eventId).get(i));
+			user=ImageOperation.attatchBase64ToUser(user);
+			users.add(user);
+		}
+		for(int i = 0; i < cartGroupRepo.selectAllUserIdByGroupId(groupId).size();i++)
+		{
+			User user = new User();
+			user = userRepo.getUserByUserId(cartGroupRepo.selectAllUserIdByGroupId(groupId).get(i));
+			user=ImageOperation.attatchBase64ToUser(user);
+			groupMember.add(user);
+		}
+		for (int i = 0; i < groupMember.size(); i++)
+		{
+			int j;
+
+			for (j = 0; j < users.size(); j++)
+				if (groupMember.get(i).getId() == users.get(j).getId())
+					break;
+
+			if (j == users.size())
+			{
+				System.out.print(groupMember.get(i).getId() + " ");
+				groupMemberLeft.add(groupMember.get(i));
+			}
+		}
+		//test
+		//System.out.println("userID: " + hostId);
+		//System.out.println("groupId: " + groupId);
+		//System.out.println("eventId: " + eventId);
+
+		//get announcement
+		List<Announcement> announcements = new ArrayList<>();
+		announcements = announcementRepository.getAnnouncementsByUserIdAndGroupIdAndEventId(hostId, groupId, eventId);
+
+		for(int i=0; i< announcements.size();i++){
+			System.out.println(announcements.get(i).getAnnouncement());
+		}
+		//set group as a model
+		model.addAttribute("groups",groupMemberLeft);
+		model.addAttribute("events",event);
+		model.addAttribute("users",users);
+		model.addAttribute("hosts",host);
+		model.addAttribute("announcements",announcements);
+		model.addAttribute("announcementpost", new Announcement());
+		return "trackMyEvents.html";
+	}
 	
 	@GetMapping("/deleteEvent/{id}")
 	public String deleteEvent(@PathVariable (value="id") long id) {
@@ -205,6 +425,15 @@ public class EventController {
 		//this.cartEventServices.
 		this.eventService.deleteEventById(id);
 		return "redirect:/";
+	}
+	@GetMapping("/leaveEvent/{groupId}/{eventId}")
+	public String leaveEvent(@PathVariable (value = "groupId") long groupId,@PathVariable (value = "eventId") long eventId, Model model,
+							 @AuthenticationPrincipal Authentication authentication) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepo.findByEmail(auth.getName());
+
+		cartGroupEventRepo.deleteAllByUserIdAndGroupIdAndEventId(user.getId(), groupId, eventId);
+		return "redirect:/events";
 	}
 	
 	@GetMapping("/page/{pageNo}")
@@ -229,7 +458,7 @@ public class EventController {
 		//Get Events IDs by userId from cart_events table
 		//List<Long> eventIDs=eventRepo.getEventsIDsByUserId(userId);
 		List<Long> eventIDs=eventRepo.getEventIdByUserIdAndGroupId(userId);
-
+		//List<Long> groupIDs=cartEventGroupServices.getEventIdByUserIdAndEventId(uId,)
 		Page<Event> eventPage = eventService.getEventsByIDs(pageNum, pageSize, eventIDs);
 
 		List<Event> events = new ArrayList<>();

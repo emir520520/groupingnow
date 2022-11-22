@@ -63,6 +63,8 @@ public class User implements Serializable {
 	private String verificationCode;
 
 	private boolean enabled;
+
+	private boolean isInvited;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_group",
@@ -205,5 +207,13 @@ public class User implements Serializable {
 
 	public void setVerificationCode(String verificationCode) {
 		this.verificationCode = verificationCode;
+	}
+
+	public boolean isInvited() {
+		return isInvited;
+	}
+
+	public void setInvited(boolean invited) {
+		isInvited = invited;
 	}
 }

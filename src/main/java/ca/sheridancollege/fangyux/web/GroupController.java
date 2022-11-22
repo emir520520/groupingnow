@@ -16,8 +16,7 @@ import ca.sheridancollege.fangyux.beans.CartGroup;
 import ca.sheridancollege.fangyux.beans.Event;
 import ca.sheridancollege.fangyux.beans.SchoolGroup;
 import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.repository.CartGroupRepository;
-import ca.sheridancollege.fangyux.repository.EventRepository;
+import ca.sheridancollege.fangyux.repository.*;
 import ca.sheridancollege.fangyux.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,8 +32,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import ca.sheridancollege.fangyux.repository.GroupRepository;
-import ca.sheridancollege.fangyux.repository.UserRepository;
 import lombok.AllArgsConstructor;
 
 @Controller
@@ -51,6 +48,8 @@ public class GroupController {
 	private GroupRepository groupRepo;
 
 	private CartGroupRepository cartgroupRepo;
+
+	private CartGroupEventRepository cartgroupeventRepo;
 
 	private UserRepository userRepo;
 
@@ -258,6 +257,7 @@ public class GroupController {
 		User user = userRepo.findByEmail(auth.getName());
 
 		cartgroupRepo.deleteByUserAndGroup(user.getId(),groupId);
+		cartgroupeventRepo.deleteAllByUserIdAndGroupId(user.getId(),groupId);
 		return "redirect:/viewGroups";
 	}
 	@GetMapping("/viewUsers")

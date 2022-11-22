@@ -73,24 +73,24 @@
 	</div>
 </nav>
 
-	<div class="row" style="height:18%">
-		<div class="col-12">
-			<h1 class="ml-5 mt-4">Events registered</h1>
-		</div>
+<div class="row" style="height:18%">
+	<div class="col-12">
+		<h1 class="ml-5 mt-4">Events registered</h1>
 	</div>
+</div>
 
-	<div class="row">
-		<div class="col-12">
-			<div class="card-deck flex-container" id="event-deck">
-			</div>
+<div class="row">
+	<div class="col-12">
+		<div class="card-deck flex-container" id="event-deck">
+		</div>
 
-			<div id="Pagination-event" class="pagination" style="display: flex;
+		<div id="Pagination-event" class="pagination" style="display: flex;
 	  justify-content: center;
 	  align-items: center;
 	  text-align: center;
 		margin-top: 60px; margin-bottom: 80px;"></div>
-		</div>
 	</div>
+</div>
 <script>
 	//??function,?????????function
 	function generateEventPagination(){
@@ -147,7 +147,8 @@
 			var base64Encoded=list[i].base64Encoded;
 			var eventName=list[i].eventName;
 			var description=list[i].description;
-
+			var eventId=list[i].id;
+			var groupId=list[i].groupId;
 			// <div className="card mb-3" style="max-width: 540px;">
 			// 	<div className="row no-gutters">
 			// 		<div className="col-md-4">
@@ -173,7 +174,7 @@
 			//Card Body
 			var eventNameH5="<h5 class='card-title' style='height:15%'>"+eventName+"</h5>";
 			var discriptionP="<p class='card-text' style='height:35%'>"+description+"</p>";
-			var findDetailsA="<a href=\"#\" class=\"btn btn-primary\">Find Details</a>"
+			var findDetailsA="<a href='/goTrackEvents/" + groupId +"/"+eventId+"' class=\"btn btn-primary\">Track Event</a>"
 
 			var cardBody="<div class=\"card-body\" style='height:100%'>"+eventNameH5+discriptionP+findDetailsA+"</div>";
 
