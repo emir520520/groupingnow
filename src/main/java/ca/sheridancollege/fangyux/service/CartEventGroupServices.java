@@ -8,6 +8,8 @@ import ca.sheridancollege.fangyux.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CartEventGroupServices {
     @Autowired
@@ -17,6 +19,9 @@ public class CartEventGroupServices {
     @Autowired
     private GroupRepository grouprepository;
 
+    public List<Long> getEventIdByUserIdAndEventId(Long userId,Long eventId){
+        return cartGroupEventRepository.getGroupIdByUserIdAndEventId(userId,eventId);
+    }
     public Integer addGroupEvent(Long groupId, Long eventId, User user){
 
         Event event = eventrepository.getById(eventId);

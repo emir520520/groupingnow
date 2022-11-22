@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://getbootstrap.com/docs/4.0/examples/navbars/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <link href="" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <!--  jQuery  -->
+  <script type="text/javascript" src="../static/js/jQuery/jquery-2.1.1.min.js"></script>
+  <!--  extra  -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
+  <a class="navbar-brand " href="/">Grouping Now</a>
+
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/events">Events</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/viewGroups">Groups</a>
+      </li>
+      <li class="nav-item" sec:authorize="isAnonymous()">
+        <a class="nav-link" href="/login">Log in</a>
+      </li>
+      <li class="nav-item" sec:authorize="isAuthenticated()">
+        <!--  <span sec:authentication="name">-->
+        <a class="nav-link" href="/userProfile"><span th:text="${user}"></span></a>
+      </li>
+      <li class="nav-item" sec:authorize="isAuthenticated()">
+        <a class="nav-link" href="/logout">Log out</a>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <form class="form-inline my-md-2">
+      <select class="form-select" aria-label="Default select example">
+        <option selected value="0">Event</option>
+        <option value="1">Group</option>
+      </select>
+      <input class="form-control m-2" type="text" placeholder="Search">
+      <button type="button" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</nav>
+
+<!--**************************************Body Div*************************************-->
+
+<div class="container-fluid">
+  <div class="row mt-2 ml-2 mr-2 mb-2">
+    <div class="col-sm-4">
+      <h2>Event Tracking</h2>
+      <div class="card list-group-item" style="width:500px" th:each="e : ${events}">
+        <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${e.getBase64Encoded()}"/>
+        <div class="card-body">
+          <h5 class="card-title" th:text="'Event Name: '+${e.eventName}"></h5>
+          <p class="card-text" th:text="'Event Name: '+${e.typeOfEvent}"></p>
+          <p class="card-text" th:text="'Host Name: '+${e.hostName}"></p>
+          <p class="card-text" th:text="'Description: '+${e.Description}"></p>
+          <p class="card-text" th:text="'Category: '+${e.Category}"></p>
+          <p class="card-text" th:text="'Location: '+${e.location}"></p>
+          <p class="card-text" th:text="'Date: '+${e.date}"></p>
+          <p class="card-text" th:text="'Time: '+${e.time}"></p>
+          <p class="card-text" th:text="'Number of Spot: '+${e.numOfSpot}"></p>
+          <p class="card-text" th:text="'Number of attendence: '+${e.numOfAttentdance}"></p>
+          <p class="card-text" th:text="'GroupId: '+${e.groupId}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="row" th:each="e : ${events}">
+        <h2>Event Announcement</h2>
+        <a th:href = "@{/leaveEvent/{groupId}/{eventId}(groupId=${e.groupId},eventId=${e.id})}" class="btn btn-danger btn-sm mb-1 mt-1" style="margin-left: 60px"
+           th:data-confirm-delete="|Are you sure you want to leave this event ?|"
+           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false">Leave Event</a><hr>
+      </div>
+      <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalAnnouncementForm">
+        Create Announcement
+      </button>
+      <!-- Modal HTML Markup -->
+      <div id="ModalAnnouncementForm" class="modal fade">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title">Create Announcement</h1>
+            </div>
+            <div class="modal-body">
+              <form role="form" method="POST" action="#" th:action="@{/addAnnouncement/}+${groupId}+'/'+${eventId}" th:object="${announcementpost}">
+                <input type="hidden" name="_token" value="">
+                <div class="form-group">
+                  <label class="control-label">Announcement</label>
+                  <input type="text" placeholder="Post Announcement" class="form-control input-lg" th:field="*{announcement}">
+                </div>
+
+                <div class="form-group">
+                  <div>
+                    <button type="submit" class="btn btn-success">Post</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      <br>
+      <div class="list-group m-5">
+      <div class="card list-group-item d-flex flex-row" th:each="a: ${announcements}">
+        <div class="card-body">
+          <h5 class="card-title" th:text="${a.hostName}"></h5>
+          <p class="card-text" th:text="${a.announcement}"></p>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <h2 th:text="'Host '"></h2>
+      <div class="card list-group-item" style="width:500px" th:each="h : ${hosts}">
+        <div class="row">
+          <div class="col-sm-3">
+            <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${h.getBase64Encoded()}"/>
+          </div>
+          <div class="col-sm-9">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${h.firstName} + ' ' + ${h.lastName}"></h5>
+              <p class="card-text" th:text="${h.email}"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <h2 th:text="'Participants: ' + ${#lists.size(users)}"></h2>
+      <div class="card list-group-item" style="width:500px" th:each="g, state : ${users}">
+        <div class="row">
+          <div class="col-sm-3">
+            <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+          </div>
+          <div class="col-sm-9">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${g.firstName} + ' ' + ${g.lastName}"></h5>
+              <p class="card-text" th:text="${g.email}"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <h2 th:text="'Group Members: ' + ${#lists.size(groups)}"></h2><p>(Who is not in this event*)</p>
+      <div class="card list-group-item" style="width:500px" th:each="g, state : ${groups}">
+        <div class="row">
+          <div class="col-sm-3">
+            <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+          </div>
+          <div class="col-sm-7">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${g.firstName} + ' ' + ${g.lastName}"></h5>
+              <p class="card-text" th:text="${g.email}"></p>
+            </div>
+          </div>
+          <div class="col-sm-3" th:each="e : ${events}">
+            <a th:href ="@{/inviteGroupMember/{eventId}/{userId}(eventId=${e.id},userId=${g.id})}" class="btn btn-info btn-sm mb-1 mt-1" style="margin-left: 40px">Invite</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--**************************************Footer*************************************-->
+<footer class="page-footer font-small bg-dark mb-0">
+  <div class="footer-copyright text-center py-3 text-white">© 2022 Copyright:
+    <a >groupingnow.ca</a>
+  </div>
+</footer>
+<!-- ******************************************************************************** -->
+<script>
+  $('#exampleModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget)
+    var recipient = button.data('whatever')
+    var modal = $(this)
+    modal.find('.modal-title').text('New message to ' + recipient)
+    modal.find('.modal-body input').val(recipient)
+  })
+</script>
+</body>
+</html>
