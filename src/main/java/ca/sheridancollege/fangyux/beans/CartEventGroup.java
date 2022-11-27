@@ -1,5 +1,7 @@
 package ca.sheridancollege.fangyux.beans;
 
+import lombok.extern.apachecommons.CommonsLog;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,17 +11,14 @@ public class CartEventGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @Column(name = "event_id")
+    private Long event;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private SchoolGroup group;
+    @Column(name = "group_id")
+    private Long group;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private Long user;
 
 
 
@@ -31,27 +30,27 @@ public class CartEventGroup {
         this.id = id;
     }
 
-    public Event getEvent() {
+    public Long getEvent() {
         return event;
     }
 
-    public void setEvent(Event event) {
+    public void setEvent(Long event) {
         this.event = event;
     }
 
-    public User getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 
-    public SchoolGroup getGroup() {
+    public Long getGroup() {
         return group;
     }
 
-    public void setGroup(SchoolGroup group) {
+    public void setGroup(Long group) {
         this.group = group;
     }
 }

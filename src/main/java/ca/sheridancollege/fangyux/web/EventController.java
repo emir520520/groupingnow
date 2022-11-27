@@ -1,11 +1,13 @@
 package ca.sheridancollege.fangyux.web;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
 import java.util.*;
 
 import javax.mail.*;
 import javax.mail.internet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.serial.SerialBlob;
 
 import ca.sheridancollege.fangyux.Utils.ImageOperation;
@@ -18,6 +20,7 @@ import ca.sheridancollege.fangyux.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.annotation.Secured;
@@ -90,7 +93,6 @@ public class EventController {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			//get event information
 			Event event = eventService.getEventById(eventId);
-			System.out.println(groupId);
 			SchoolGroup group = groupService.getGroupById(groupId);
 			String content;
 			content =
@@ -108,6 +110,8 @@ public class EventController {
 
 			User user = userRepo.findByEmail(auth.getName());
 			Integer updatedQuantity = cartEventGroupServices.addGroupEvent(groupId, eventId, user);
+			cartEventServices.addEvent(eventId, user);
+
 			return "redirect:/events";
 		} catch(UsernameNotFoundException ex){
 			System.out.println("You must login to add this event to cart");
@@ -147,7 +151,7 @@ public class EventController {
 	}
 
 	@GetMapping("/inviteGroupMember/{eventId}/{userId}")
-	public String inviteGroupMember(@PathVariable("eventId") Long eventId, @PathVariable("userId") Long userId, @AuthenticationPrincipal Authentication authentication) throws AddressException, MessagingException, IOException{
+	public String inviteGroupMember(@PathVariable("eventId") Long eventId, @PathVariable("userId") Long userId, @AuthenticationPrincipal Authentication authentication, HttpServletRequest request) throws AddressException, MessagingException, IOException{
 		try{
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			//get event information
@@ -181,7 +185,10 @@ public class EventController {
 			helper.setSubject("Get Invite f");
 			content = content.replace("[[name]]", user.getFirstName() + user.getLastName());
 
-			String xURL ="@{/addGroupEventToCart/"+event.getGroupId()+"/"+eventId;
+
+			String siteURL = request.getRequestURL().toString();
+			String hostURL=siteURL.replace(request.getServletPath(), "");
+			String xURL =hostURL+"/acceptInviteToEvnt/"+event.getGroupId()+"/"+eventId+"?userId="+userId;
 			content = content.replace("[[URL]]", xURL);
 
 			sendmail(user.getEmail(), content);
@@ -193,6 +200,18 @@ public class EventController {
 			return "You must login to add this event to cart";
 		}
 	}
+
+	@GetMapping("/acceptInviteToEvnt/{groupId}/{eventId}")
+	public String verifyUser(@PathVariable("groupId") Long groupId, @PathVariable("eventId") Long eventId, @Param("userId") String userId) throws MessagingException, UnsupportedEncodingException {
+		String result = cartEventGroupServices.acceptInviteToEvent(groupId, eventId, Long.valueOf(userId));
+
+		if (result.equals("success")) {
+			return "accept_join_event_success";
+		} else {
+			return "accept_join_event_fail";
+		}
+	}
+
 	//display list of event
 	@GetMapping("/addEvent/{groupId}")
 	public String showNewEventForm(Model model, @PathVariable("groupId")Long groupId) {

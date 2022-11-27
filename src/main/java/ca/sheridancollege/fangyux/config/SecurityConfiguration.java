@@ -79,7 +79,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.antMatchers(HttpMethod.GET, "/addEvent").hasRole("USER")
 		//.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addEvent").hasRole("USER")
-
 		//.anyRequest().authenticated()
 		.and()
 		.formLogin()
@@ -101,7 +100,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception{
-		web.ignoring().antMatchers("/static/**","/css/**");
+		web.ignoring().antMatchers("/static/**","/static/css/**","/static/images/**","/static/img/**","/static/js/**","/static/layer-v3.1.1/**","/static/my-js/**");
 	}
 	
 	@Autowired

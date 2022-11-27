@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,12 +112,8 @@ public class HomeController {
 		}
 
 		Event event = eventService.getEventById(eventId);
-//		SchoolGroup group = groupService.getGroupById(groupId);
-
-//		System.out.println(group.getId());
 
 		event= ImageOperation.attatchBase64ToEvent(event);
-		//set event as a model
 		model.addAttribute("events",event);
 //		model.addAttribute("groups",group);
 			return "findDetailsEvent.html";
