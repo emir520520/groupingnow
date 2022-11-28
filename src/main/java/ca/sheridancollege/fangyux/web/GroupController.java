@@ -1,8 +1,10 @@
 package ca.sheridancollege.fangyux.web;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -20,6 +22,7 @@ import ca.sheridancollege.fangyux.repository.*;
 import ca.sheridancollege.fangyux.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -190,19 +193,23 @@ public class GroupController {
 	@Secured("ROLE_USER")
 	@PostMapping("/addGroup")
 	public String saveGroup(@ModelAttribute("group") SchoolGroup group, Model model, @RequestParam(value="image", required=true) MultipartFile 
-			file, @AuthenticationPrincipal Authentication authentication) throws IOException{
-		
-		Blob blob = null;
-	    byte[] blobAsBytes=null;
-	    try {
-	        blob = new SerialBlob(file.getBytes());
-	        
-	        int blobLength = (int) blob.length();  
-	        blobAsBytes = blob.getBytes(1, blobLength);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    group.setPhoto(blobAsBytes);
+			file, @AuthenticationPrincipal Authentication authentication) throws IOException, SQLException {
+
+		if(file!=null){
+			Blob blob = null;
+			byte[] blobAsBytes=null;
+			blob = new SerialBlob(file.getBytes());
+
+			int blobLength = (int) blob.length();
+			blobAsBytes = blob.getBytes(1, blobLength);
+
+			group.setPhoto(blobAsBytes);
+		}else{
+			//Set default image for the event in case user did not attach the image for it
+			InputStream is=Thread.currentThread().getContextClassLoader().getResourceAsStream("static/img/default_avatar.png");
+			MultipartFile groupImage=new MockMultipartFile("avatar", is);
+			group=ImageOperation.attatchToGroup(group,groupImage);
+		}
 	    
 	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userRepo.findByEmail(auth.getName());

@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.sql.Blob;
 import java.util.Base64;
@@ -68,22 +70,8 @@ public class ImageOperation {
     }
     
     public static String transferToBase64(byte[] photo) throws IOException {
-        //In case, the object did not have image set
-        if(photo==null){
-            //Set default avatar
-            File defaultAvatar=new File("src/main/resources/static/img/default_image.png");
-            String absolutePath = defaultAvatar.getAbsolutePath();
-            File a=new File(absolutePath);
+        byte[] encodeBase64 = Base64.getEncoder().encode(photo);
 
-            MultipartFile avatar=new MockMultipartFile("avatar", Files.readAllBytes(a.toPath()));
-
-            byte[] encodeBase64 = Base64.getEncoder().encode(Files.readAllBytes(a.toPath()));
-
-            return new String(encodeBase64, "UTF-8");
-        }else{
-            byte[] encodeBase64 = Base64.getEncoder().encode(photo);
-
-            return new String(encodeBase64, "UTF-8");
-        }
+        return new String(encodeBase64, "UTF-8");
     }
 }

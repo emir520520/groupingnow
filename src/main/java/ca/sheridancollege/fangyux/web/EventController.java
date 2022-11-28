@@ -1,8 +1,10 @@
 package ca.sheridancollege.fangyux.web;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.*;
 
 import javax.mail.*;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -230,21 +233,22 @@ public class EventController {
 	}
 
 	@PostMapping("/addEvent/{groupId}")
-	public String addEvent(@PathVariable (value = "groupId") String groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication) throws MessagingException, IOException {
-//		String id = String.valueOf(UUID.randomUUID());
-
-		Blob blob = null;
-		byte[] blobAsBytes=null;
-		try {
+	public String addEvent(@PathVariable (value = "groupId") String groupId, @ModelAttribute("event") Event event, @RequestParam(value = "image", required = true)MultipartFile file, @AuthenticationPrincipal Authentication authentication) throws MessagingException, IOException, SQLException {
+		if(!file.isEmpty()){
+			Blob blob = null;
+			byte[] blobAsBytes=null;
 			blob = new SerialBlob(file.getBytes());
 
 			int blobLength = (int) blob.length();
 			blobAsBytes = blob.getBytes(1, blobLength);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		event.setEventImage(blobAsBytes);
+			event.setEventImage(blobAsBytes);
+		}else{
+			//Set default image for the event in case user did not attach the image for it
+			InputStream is=Thread.currentThread().getContextClassLoader().getResourceAsStream("static/img/default_image.png");
+			MultipartFile eventImage=new MockMultipartFile("avatar", is);
+			event=ImageOperation.attatchToEvent(event,eventImage);
+		}
 
 		Long groupIdLong=Long.parseLong(groupId);
 		event.setGroupId(groupIdLong);

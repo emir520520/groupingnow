@@ -2,6 +2,7 @@ package ca.sheridancollege.fangyux.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.*;
@@ -192,11 +193,13 @@ public class UserServiceImpl implements UserService {
 		user.addRole(role);
 
 		//Set default avatar
-		File defaultAvatar=new File("src/main/resources/static/img/default_avatar.png");
-		String absolutePath = defaultAvatar.getAbsolutePath();
-		File a=new File(absolutePath);
+//		File defaultAvatar=new File("src/main/resources/static/img/default_avatar.png");
+		InputStream is=Thread.currentThread().getContextClassLoader().getResourceAsStream("static/img/default_avatar.png");
 
-		MultipartFile avatar=new MockMultipartFile("avatar", Files.readAllBytes(a.toPath()));
+//		String absolutePath = defaultAvatar.getAbsolutePath();
+//		File a=new File(absolutePath);
+
+		MultipartFile avatar=new MockMultipartFile("avatar", is);
 
 		user= ImageOperation.attatchToUser(user, avatar);
 
