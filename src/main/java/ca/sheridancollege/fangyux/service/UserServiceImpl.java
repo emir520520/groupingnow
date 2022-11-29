@@ -119,7 +119,6 @@ public class UserServiceImpl implements UserService {
 
 		
 		 User user = userRepository.findByEmail(email);
-		 System.out.println("User email: " + user.getEmail());
 		 if(user == null) 
 		 { 
 			 throw new UsernameNotFoundException("Invalid email or password."); 

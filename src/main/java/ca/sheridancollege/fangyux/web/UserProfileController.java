@@ -69,12 +69,6 @@ public class UserProfileController {
 			return "home";
 		}
 		List<CartEvent> cartEvents = carteventservices.listCartEvents(user);
-		/*long eventId = eventService.getEventIdByUserId(user.getId());
-		System.out.println("Event ID: " + eventId);
-		Event event = eventService.getEventById(eventId);
-		event= ImageOperation.attatchBase64ToEvent(event);
-
-		model.addAttribute("events",event);*/
 		model.addAttribute("user",user);
 		model.addAttribute("cartEvents",cartEvents);
 		model.addAttribute("pageTitle","Event Cart");

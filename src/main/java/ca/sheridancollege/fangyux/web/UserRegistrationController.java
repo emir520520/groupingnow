@@ -64,8 +64,6 @@ public class UserRegistrationController {
 	@GetMapping("/verify")
 	public String verifyUser(@Param("code") String code, Model model, User user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
 		boolean verified = userService.verify(code);
-		System.out.println("\n"+verified);
-		System.out.println("\n"+code);
 		if (verified == true) {
 			return "register/verify_success";
 		} else {

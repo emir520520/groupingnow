@@ -30,7 +30,6 @@ public class CartEventGroupServices {
         CartEventGroup cartEventGroup = cartGroupEventRepository.findByUserAndEventAndGroup(user, event, group);
 
         if(cartEventGroup != null) {
-            System.out.println("No cart event group");
         } else{
             cartEventGroup = new CartEventGroup();
             cartEventGroup.setUser(user.getId());

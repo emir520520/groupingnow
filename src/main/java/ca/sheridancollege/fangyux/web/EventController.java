@@ -117,7 +117,6 @@ public class EventController {
 
 			return "redirect:/events";
 		} catch(UsernameNotFoundException ex){
-			System.out.println("You must login to add this event to cart");
 			return "You must login to add this event to cart";
 		}
 	}
@@ -148,7 +147,6 @@ public class EventController {
 
 			return "redirect:/events";
 		} catch(UsernameNotFoundException ex){
-			System.out.println("You must login to add this event to cart");
 			return "You must login to add this event to cart";
 		}
 	}
@@ -199,7 +197,6 @@ public class EventController {
 
 			return "redirect:/goTrackMyEvents/" + event.getGroupId() + "/" + eventId;
 		} catch(UsernameNotFoundException ex){
-			System.out.println("You must login to add this event to cart");
 			return "You must login to add this event to cart";
 		}
 	}
@@ -355,14 +352,9 @@ public class EventController {
 
 			if (j == users.size())
 			{
-				System.out.print(groupMember.get(i).getId() + " ");
 				groupMemberLeft.add(groupMember.get(i));
 			}
 		}
-		//test
-		System.out.println("userID: " + hostId);
-		System.out.println("groupId: " + groupId);
-		System.out.println("eventId: " + eventId);
 
 		//get announcement
 		List<Announcement> announcements = new ArrayList<>();
@@ -419,22 +411,14 @@ public class EventController {
 
 			if (j == users.size())
 			{
-				System.out.print(groupMember.get(i).getId() + " ");
 				groupMemberLeft.add(groupMember.get(i));
 			}
 		}
-		//test
-		//System.out.println("userID: " + hostId);
-		//System.out.println("groupId: " + groupId);
-		//System.out.println("eventId: " + eventId);
 
 		//get announcement
 		List<Announcement> announcements = new ArrayList<>();
 		announcements = announcementRepository.getAnnouncementsByUserIdAndGroupIdAndEventId(hostId, groupId, eventId);
 
-		for(int i=0; i< announcements.size();i++){
-			System.out.println(announcements.get(i).getAnnouncement());
-		}
 		//set group as a model
 		model.addAttribute("groups",groupMemberLeft);
 		model.addAttribute("events",event);

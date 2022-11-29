@@ -178,7 +178,6 @@ public class GroupController {
 			Integer updatedParticipants = cartGroupServices.addGroup(groupId, user);
 			return "redirect:/viewGroupFromCart";
 		} catch(UsernameNotFoundException ex){
-			System.out.println("You must login to add this group to cart");
 			return "You must login to add this group to cart";
 		}
 	}

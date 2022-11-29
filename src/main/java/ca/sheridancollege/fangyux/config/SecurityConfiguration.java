@@ -1,6 +1,9 @@
 package ca.sheridancollege.fangyux.config;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +24,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.util.UrlPathHelper;
 
 import ca.sheridancollege.fangyux.config.oauth.*;
@@ -109,4 +115,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
+	@Bean
+	public CorsFilter corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowedHeaders(List.of("*"));
+		corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
+		corsConfiguration.setAllowedMethods(Arrays.asList("*")); // add this line with appropriate methods for your case
+		corsConfiguration.setMaxAge(Duration.ofMinutes(10));
+		source.registerCorsConfiguration("/**", corsConfiguration);
+		return new CorsFilter(source);
+	}
 }

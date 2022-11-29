@@ -55,15 +55,11 @@ public class HomeController {
 		//-------------------------------------------Authentication
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		System.out.println("User : " + auth.getName());
 		User user = userRepo.findByEmail(auth.getName());
-		//System.out.println("User email controller: " + user.getEmail());
-		System.out.println("auth principal: " + auth.getPrincipal());
 		if(user!=null) {
 			model.addAttribute("user", user.getFirstName());
 		}
 		else {
-			System.out.println("Fail to load user");
 		}
 
 		return "home.html";
