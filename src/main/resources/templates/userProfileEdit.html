@@ -10,7 +10,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <body th:object="${originalUser}">
 
 <nav class="navbar navbar-expand-md navbar-dark bg-primary  navbar-fixed-top">
-		<a class="navbar-brand" href="@{/}">Grouping Application</a>
+		<a class="navbar-brand" href="/">Grouping Application</a>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="navbar-nav">
 				<li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" th:href="@{/userProfile}">User Profile</a></li>
@@ -21,55 +21,118 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 				<input class="form-control mr-sm-2" type="text" placeholder="Search">
       				<button class="btn btn-success my-2 my-sm-0" type="button">Search</button>
 			</form>
-	
-	</nav> 
-	
-	<h1 th:text="${originalUser.email}">USER EMAIL</h1>
-	
-	<form class="form-group" th:action="@{/userProfileEdit}" th:object="${user}" method="post" enctype="multipart/form-data">
-	
-	<input type="hidden" th:field="*{email}" th:value="${originalUser.email}">
-	<input type="file" name="image" accept="image/png, image/jpeg"/>
-	<hr>
-	
-			<span>First Name:
-			<input type="text" th:value="${originalUser.firstName}" th:field="*{firstName}"/></span>
+	</nav>
 
-			<span>Last Name:
-			<input type="text" th:placeholder="${originalUser.lastName}" th:field="*{lastName}"/></span>
-				<p>Program:</p>
-			<input type="text" th:placeholder="${originalUser.program}" th:field="*{program}"/>
-			
-	<h3>Topics</h3>
-	<p>Select from the dropdown below to save a topic!</p>
+	<form class="form-group" th:action="@{/userProfileEdit}" th:object="${user}" method="post" enctype="multipart/form-data">
+
+		<input type="hidden" name="id" th:value="${originalUser.id}" />
+
+		<section style="background-color: #eee;">
+			<div class="container py-5">
+
+				<div class="row">
+					<div class="col-lg-4">
+						<div class="card mb-10">
+							<div class="card-body text-center">
+								<img th:src="'data:image/jpeg;base64,'+${originalUser.getBase64Encoded()}" alt="profilePicture"
+									 class="rounded-circle img-fluid" style="width: 150px;">
+								<h5 class="my-3" th:text="${originalUser.firstName}+' '+${originalUser.lastName}">User Name</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-8">
+						<div class="card mb-4">
+							<div class="card-body">
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">First Name</p>
+									</div>
+									<div class="col-sm-9">
+										<input class="text-muted mb-0" type="text" name="firstName" th:value="${originalUser.firstName}"/></span>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Last Name</p>
+									</div>
+									<div class="col-sm-9">
+										<input class="text-muted mb-0" type="text" name="lastName" th:value="${originalUser.lastName}"/></span>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Email</p>
+									</div>
+									<div class="col-sm-9">
+										<input class="text-muted mb-0" type="text" name="email" th:value="${originalUser.email}"/></span>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Campus</p>
+									</div>
+									<div class="col-sm-9">
+										<input class="text-muted mb-0" type="text" name="campus" th:value="${originalUser.campus}"/></span>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Program</p>
+									</div>
+									<div class="col-sm-9">
+										<input class="text-muted mb-0" type="text" name="program" th:value="${originalUser.program}"/></span>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Avatar</p>
+									</div>
+									<div class="col-sm-9">
+										<input type="file" name="image" accept="image/png, image/jpeg" class="text-muted mb-0"/>
+									</div>
+								</div>
+								<hr>
+<!--								<div class="row">-->
+<!--									<div class="col-sm-3">-->
+<!--										<p class="mb-0">Topics</p>-->
+<!--									</div>-->
+<!--									<div class="col-sm-9">-->
+<!--										<div class="custom-control custom-switch" th:each="topic:${topics}">-->
+<!--											<input type="checkbox" class="custom-control-input" id="customSwitch1" th:>-->
+<!--											<label class="custom-control-label" for="customSwitch1">Toggle this switch element</label>-->
+<!--										</div>-->
+<!--									</div>-->
+<!--								</div>-->
+<!--								<hr>-->
+								<div class="row">
+									<input type="submit" value="Save Changes!"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+<!--	<h3>Topics</h3>-->
+<!--	<p>Select from the dropdown below to save a topic!</p>-->
+<!--	<p style="color: #c82333" th:unless="${!originalUser.topics.isEmpty()}">You do not have any interested topics right now, please choose some!</p>-->
 	
-	<select th:field="*{topic}" th:name="topic" multiple>
-		<option th:each="topic : ${topicList}" th:value="${topic.name}" th:text="${topic.name}" name="topic"></option>
-	</select>
-	
-	<input type="submit" value="Save Changes!"/>
+<!--	<select th:field="*{topics}" th:value="*{topics}" th:name="topics" multiple>-->
+<!--		<option th:each="topic : ${topics}" th:value="${topic.id}" th:text="${topic.name}" name="topic"></option>-->
+<!--	</select>-->
+
+<!--		<div class="form-check" th:each="topic : ${topics}">-->
+<!--			<input class="form-check-input" type="checkbox" th:value="${topic.id}" id="flexCheckDefault">-->
+<!--			<label class="form-check-label" for="flexCheckDefault">-->
+<!--			</label>-->
+<!--		</div>-->
 	</form>
 	<hr>
-	
-	<table>
-		<tr>
-			<th><h2>Courses</h2></th>
-		</tr>
-		<tr>
-			<td>
-				<div>
-					<h3>Course Name</h3>
-					<p>Course schedule</p>
-				</div>
-			</td>
-		</tr>
-	</table>
-	<form class="form-group" th:action="@{/addCourse}" th:object="${course}" method="post">
-		<input type="hidden" th:field="*{id}"/>
-		<input type="text"  class="form-control" placeholder="Course Name" th:field="*{courseName}"/>
-		<input type="text" class="form-control" placeholder="Course Day" th:field="*{courseDay}" />
-		<input type="text" class="form-control" placeholder="Course Time" th:field="*{courseTime}" />
-		<input type="submit" value="Add Course!"/>
-	</form>
 </body>
 </html>

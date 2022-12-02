@@ -8,29 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import ca.sheridancollege.fangyux.beans.CartEvent;
 import ca.sheridancollege.fangyux.beans.Event;
-import ca.sheridancollege.fangyux.beans.User;
-import ca.sheridancollege.fangyux.repository.CartEventRepository;
 import ca.sheridancollege.fangyux.repository.EventRepository;
 
 
 @Service
 public class EventServiceImpl implements EventService{
-	
+
 	@Autowired
 	private EventRepository eventRepository;
-	
-	@Autowired
-	private CartEventRepository carteventrepository;
-	
-	@Autowired
-	private UserService userService;
-	
+
 	@Override
 	public List<Event> getAllEvents(){
 		return eventRepository.findAll();
@@ -59,22 +48,6 @@ public class EventServiceImpl implements EventService{
 		//this.carteventrepository.deleteById(id);
 		this.eventRepository.deleteById(id);
 	}
-	
-	@Override
-	public void addEventToCart(long id) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userService.getUserByEmail(auth.getName());
-		
-		CartEvent newEvent = new CartEvent();
-		newEvent.setUser(user);
-		newEvent.setEvent(this.eventRepository.getById(id));
-		newEvent.setQuantity(1);
-		
-		CartEvent saveCartEvent = carteventrepository.save(newEvent);
-		saveCartEvent.getId();
-	}
-	
-
 
 	@Override
 	public Page<Event> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
@@ -86,7 +59,47 @@ public class EventServiceImpl implements EventService{
 	}
 
 	@Override
+	public Page<Event> getEventsPaginated(int pageNo, int pageSize, String scope) {
+
+		if(scope=="all"){
+			Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+			return this.eventRepository.findAll(pageable);
+		}else{
+			Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+			return this.eventRepository.getUserEvents(scope, pageable);
+		}
+	}
+
+	@Override
 	public void save(Event event) {
 		eventRepository.save(event);
+	}
+
+	@Override
+	public Page<Event> getrEventsOfGroup(int pageNo, int pageSize, Long groupId) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return this.eventRepository.getrEventsOfGroup(groupId, pageable);
+	}
+
+	@Override
+	public Page<Event> getEventsByIDs(int pageNum, int pageSize,List<Long> eventIDs) {
+		Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+		return this.eventRepository.getEventsByIDs(eventIDs, pageable);
+	}
+
+	@Override
+	public Page<Event> getEventsByName(int pageNum, int pageSize, String name) {
+		Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+		return this.eventRepository.getEventsByName(name, pageable);
+	}
+
+	@Override
+	public long getEventIdByUserId(long userId) {
+		return this.eventRepository.getEventId(userId);
+	}
+
+	@Override
+	public List<Long> getEventIdByUserIdAndGroupId(long userId) {
+		return this.eventRepository.getEventIdByUserIdAndGroupId(userId);
 	}
 }

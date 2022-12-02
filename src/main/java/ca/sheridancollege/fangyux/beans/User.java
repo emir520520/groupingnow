@@ -1,8 +1,14 @@
 package ca.sheridancollege.fangyux.beans;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+//import lombok.*;
+
+import java.io.Serializable;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,8 +30,12 @@ import javax.persistence.JoinColumn;
 
 //@ComponentScan
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class User {
+//@Data
+//@Getter
+//@Setter
+//@AllArgsConstructor
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,38 +49,56 @@ public class User {
 	
 	@Column(name = "email")
 	private String email;
-	
-	private String course="";
-	
-	private String topic;
-	
+
+	@Column(name = "program")
 	private String program;
+
+	@Column(name = "campus")
+	private String campus;
 	
 	private String password;
-	
+
+
+	@Column(name = "verification_code", length = 64)
+	private String verificationCode;
+
 	private boolean enabled;
+
+	private boolean isInvited;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_group",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "group_id", referencedColumnName = "id"))
 	private List<SchoolGroup> groups;
-	
+
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
-			name = "users_roles",
+			name = "user_role",
 			joinColumns = @JoinColumn(
 					name = "user_id", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(
 					name = "role_id", referencedColumnName = "id"))
-	private Collection<Role> roles;
+	private Set<Role> roles = new HashSet<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_event")
+	@JoinTable(name = "user_event",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "event_id", referencedColumnName = "id"))
 	private List<Event> events;
 	
-	@OneToMany
-	private List<Course> courseList = new ArrayList<Course>();
-	
-	@OneToMany
-	private List<Topic> topicList = new ArrayList<Topic>();
+	@ManyToMany
+	@JoinTable(name = "user_topic",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "topic_id", referencedColumnName = "id"))
+	private List<Topic> topics = new ArrayList<>();
 	
 	@Lob
 	@Column(name = "photo", nullable = true)
@@ -78,14 +106,11 @@ public class User {
 	
 	@Transient
 	String base64Encoded;
-	
 
-	public User()
-	{
-		
+	public User() {
 	}
-	
-	public User(String firstName, String lastName, String email, String password, Collection<Role> roles) {
+
+	public User(String firstName, String lastName, String email, String password, Set<Role> roles) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -117,28 +142,36 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public String getCampus() {
+		return campus;
+	}
+
+	public void setCampus(String campus) {
+		this.campus = campus;
+	}
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Collection<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
-	public void setRoles(Collection<Role> roles) {
+
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	public void addRole(Role role){
+		this.roles.add(role);
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-	
-	public List<Course> getCourseList(){
-		return this.courseList;
 	}
 	
 	public void setProgram(String program) {
@@ -154,22 +187,7 @@ public class User {
 	}
 	
 	public List<Topic> getTopicList(){
-		return this.topicList;
-	}
-	public String getTopic() {
-		return topic;
-	}
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
-	public String getCourse() {
-		return course;
-	}
-	public void setCourse(String course) {
-		this.course = course;
-	}
-	public void appendCourse(String course) {
-		this.course += course;
+		return this.topics;
 	}
 	
 	public byte[]  getPhoto() {
@@ -182,5 +200,20 @@ public class User {
 	
 	public String getBase64Encoded() {
 		return base64Encoded;
+	}
+	public String getVerificationCode() {
+		return verificationCode;
+	}
+
+	public void setVerificationCode(String verificationCode) {
+		this.verificationCode = verificationCode;
+	}
+
+	public boolean isInvited() {
+		return isInvited;
+	}
+
+	public void setInvited(boolean invited) {
+		isInvited = invited;
 	}
 }

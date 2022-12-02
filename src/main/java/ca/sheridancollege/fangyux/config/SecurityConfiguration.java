@@ -1,6 +1,9 @@
 package ca.sheridancollege.fangyux.config;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +24,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.util.UrlPathHelper;
 
 import ca.sheridancollege.fangyux.config.oauth.*;
@@ -54,8 +60,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(userService);
+        auth.setUserDetailsService(userDetailsService());
         auth.setPasswordEncoder(passwordEncoder());
+
         return auth;
     }
 	
@@ -66,44 +73,57 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+
+		http.cors().and().csrf().disable()
+				.authorizeRequests()
+				.antMatchers( "/favicon.ico").permitAll()
 		.antMatchers(HttpMethod.GET, "/").permitAll()
 		.antMatchers(HttpMethod.GET, "/registration**").permitAll()
-		.antMatchers(HttpMethod.GET, "//js/**").permitAll()
-		.antMatchers(HttpMethod.GET, "/css/**").permitAll()
-		.antMatchers(HttpMethod.GET, "/images/**").permitAll()
 		.antMatchers(HttpMethod.GET, "//user/**").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/cart").hasRole("USER")
-		.antMatchers(HttpMethod.GET, "/addGroup").hasRole("USER")
+		//.antMatchers(HttpMethod.GET, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.GET, "/addEvent").hasRole("USER")
-		.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
+		//.antMatchers(HttpMethod.POST, "/addGroup").hasRole("USER")
 		.antMatchers(HttpMethod.POST, "/addEvent").hasRole("USER")
-		.anyRequest().authenticated() 
+		//.anyRequest().authenticated()
 		.and()
 		.formLogin()
-		.loginPage("/login")
-		.usernameParameter("email")
-		.permitAll()
-		.defaultSuccessUrl("/")
-		.successHandler(customAuthenticationSuccessHandler)
+			.loginPage("/login")
+			.usernameParameter("email")
+			.permitAll()
+			.defaultSuccessUrl("/")
+			.successHandler(customAuthenticationSuccessHandler)
+			.failureHandler(customAuthenticationFailureHandler)
 		.and()
 		.logout()
 		.invalidateHttpSession(true)
 		.clearAuthentication(true)
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//		.logoutSuccessUrl("/login?logout")
 		.logoutSuccessUrl("/")
 		.permitAll();
-		
-		http.csrf().disable();
+
 	}
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception{
-		web.ignoring().antMatchers("/images/**,/js/**");
+		web.ignoring().antMatchers("/static/**","/static/css/**","/static/images/**","/static/img/**","/static/js/**","/static/layer-v3.1.1/**","/static/my-js/**");
 	}
 	
 	@Autowired
 	private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
+	@Autowired
+	private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+	@Bean
+	public CorsFilter corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowedHeaders(List.of("*"));
+		corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
+		corsConfiguration.setAllowedMethods(Arrays.asList("*")); // add this line with appropriate methods for your case
+		corsConfiguration.setMaxAge(Duration.ofMinutes(10));
+		source.registerCorsConfiguration("/**", corsConfiguration);
+		return new CorsFilter(source);
+	}
 }

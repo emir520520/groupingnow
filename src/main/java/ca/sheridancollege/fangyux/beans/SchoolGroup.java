@@ -1,15 +1,7 @@
 package ca.sheridancollege.fangyux.beans;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,12 +14,15 @@ import lombok.NonNull;
 @Data
 @Entity
 @Builder
+@Table(name="school_group")
 public class SchoolGroup {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@NonNull
+	private Long userId;
 	@NonNull
 	private String name;
 	@NonNull
@@ -35,7 +30,12 @@ public class SchoolGroup {
 	@NonNull
 	private String study;
 
+	@NonNull
 	private String admins;
+
+	@NonNull
+	@Column(name = "admin_id")
+	private Long admin_id;
 	private String invites;
 	@NonNull
 	private String description;
@@ -50,4 +50,6 @@ public class SchoolGroup {
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy="groups")
 	private List<User> users;
+
+//	@ManyToOne
 }
